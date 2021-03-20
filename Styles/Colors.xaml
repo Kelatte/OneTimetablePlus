@@ -1,0 +1,21 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:OneTimetablePlus.Styles">
+
+    <Color x:Key="Color1">#C5E4FB</Color>
+    <SolidColorBrush x:Key="BackgroundVeryLightBrush" Color="{StaticResource Color1}"/>
+
+    <Color x:Key="Color2">#8BC1EA</Color>
+    <SolidColorBrush x:Key="BackgroundLightBrush" Color="{StaticResource Color2}"/>
+
+    <Color x:Key="Color3">#5D9ECF</Color>
+    <SolidColorBrush x:Key="ForegroundLightBrush" Color="{StaticResource Color3}"/>
+
+    <Color x:Key="Color4">#3A77A7</Color>
+    <SolidColorBrush x:Key="ForegroundMainBrush" Color="{StaticResource Color4}"/>
+
+    <Color x:Key="Color5">#225781</Color>
+    <SolidColorBrush x:Key="ForegroundDarkBrush" Color="{StaticResource Color5}"/>
+
+
+</ResourceDictionary>

@@ -1,0 +1,160 @@
+﻿<Window x:Class="OneTimetablePlus.Views.EditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OneTimetablePlus.Views"
+        xmlns:models="clr-namespace:OneTimetablePlus.Models"
+        xmlns:resources="clr-namespace:OneTimetablePlus.Resources"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:cmd="http://www.galasoft.ch/mvvmlight"
+        mc:Ignorable="d"
+        Title="EditWindow" Height="700" Width="430"
+        DataContext="{Binding Edit, Source={StaticResource Locator}}">
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closed">
+            <cmd:EventToCommand Command="{Binding Mode=OneWay, Path=ClosedCommand}"
+                                PassEventArgsToCommand="False" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <StackPanel>
+        <GroupBox Header="程序设置">
+            <StackPanel Orientation="Horizontal">
+                <CheckBox Content="开机自启" IsChecked="{Binding IsAutoStart}" Margin="5" />
+                <CheckBox Content="天气预报" IsChecked="{Binding WeatherForecastEnabled}" Margin="5" />
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="课程设置" Margin="0 10 0 0">
+            <DockPanel>
+                <!-- 下方 功能区 -->
+                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MidButton}"/>
+                    </StackPanel.Resources>
+                    <Button Content="保存" Command="{Binding SaveCommand}"></Button>
+                    <Button Content="重载" Command="{Binding ReloadCommand}"></Button>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+                            HorizontalAlignment="Left">
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MidButton}"/>
+                    </StackPanel.Resources>
+                    <Button Content="新加当日循环课表" Command="{Binding AddCirculatingDayCommand}"/>
+                    <Button Content="删除该循环课表" Command="{Binding DeleteCirculatingDayCommand}"/>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+                            HorizontalAlignment="Left">
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MidButton}"/>
+                    </StackPanel.Resources>
+                    <Button Content="删除该课" Command="{Binding DeleteCourseCommand}"></Button>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBox Text="{Binding NewCourseSpeciesFullName}"/>
+                        <TextBox Text="{Binding NewCourseSpeciesShowName}"/>
+                    </StackPanel>
+                    <Button Content="新加课种" Command="{Binding AddCourseSpeciesCommand}"></Button>
+
+                </StackPanel>
+
+                <!-- 右侧 添加课程至课表 -->
+                <ItemsControl DockPanel.Dock="Right"
+                  ItemsSource="{Binding CourseSpecies}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button
+                        Style="{StaticResource MidButton}"
+                        Content="{Binding FullName}">
+                                <Button.InputBindings>
+                                    <MouseBinding Gesture="RightClick" 
+                                          Command="{Binding Path=DataContext.DeleteCourseSpeciesCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Window}}"
+                                          CommandParameter="{Binding FullName}"
+                            />
+                                    <MouseBinding Gesture="LeftClick"
+                                          Command="{Binding Path=DataContext.AddCourseCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                          CommandParameter="{Binding FullName}"
+                            />
+
+                                </Button.InputBindings>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- 左中 显示课表 -->
+                <StackPanel DockPanel.Dock="Left">
+                    <!-- 选择课表 -->
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <TextBlock Text="周表名称：" Style="{StaticResource SmallText}" Margin="5"/>
+
+                        <ComboBox x:Name="SelectWeekComboBox" ItemsSource="{Binding WeekCourses}"
+                                  SelectedItem="{Binding SelectedWeek}" 
+                                  Margin="5" Padding="5">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding WeekName}" Style="{StaticResource SmallText}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+
+                        <Button Content="删除此周表" Command="{Binding DeleteWeekCourseCommand}" Style="{StaticResource MidButton}"
+                                CommandParameter="{Binding ElementName=SelectWeekComboBox,Path=SelectedItem}"
+                                />
+                            <StackPanel Margin="3">
+                            <TextBox x:Name="AddWeekCourseTextBox" Text="新加课表名称" VerticalContentAlignment="Center"
+                             VerticalAlignment="Center"/>
+                            <Button Content="新加周表" Command="{Binding AddWeekCourseCommand}" 
+                            CommandParameter="{Binding ElementName=AddWeekCourseTextBox, Path=Text}"></Button>
+
+                        </StackPanel>
+
+                    </StackPanel>
+
+                    <!-- 显示课表 TabControl -->
+                    <TabControl ItemsSource="{Binding DayCourses}" 
+                                SelectedItem="{Binding SelectedDayCourse}">
+
+                        <!--<i:Interaction.Behaviors>
+                            <resources:PersistentSelectionBehavior />
+                        </i:Interaction.Behaviors>-->
+
+                        <TabControl.ItemTemplate>
+                            <HierarchicalDataTemplate >
+                                <TextBlock Text="{Binding DayName}" Style="{StaticResource SmallText}"/>
+
+                            </HierarchicalDataTemplate>
+                        </TabControl.ItemTemplate>
+
+                        <TabControl.ContentTemplate>
+                            <ItemContainerTemplate>
+                                <StackPanel>
+                                    <ListBox
+                                ItemsSource="{Binding (models:DayCourse.Courses)}"
+                                SelectedItem="{Binding DataContext.SelectedCourse,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Window}}">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding FullName}" Style="{StaticResource MiddleText}"/>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+
+                                </StackPanel>
+
+
+                            </ItemContainerTemplate>
+                        </TabControl.ContentTemplate>
+
+                    </TabControl>
+
+                </StackPanel>
+            </DockPanel>
+        </GroupBox>
+
+    </StackPanel>
+    
+</Window>

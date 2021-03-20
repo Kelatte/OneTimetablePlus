@@ -1,0 +1,25 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+
+    <FontFamily x:Key="LatoBold">pack://application;,,,/Assets/Fonts/#Lato Bold</FontFamily>
+
+
+    <!--<Setter Property="FontFamily" Value="Microsoft Yahei"/>-->
+    <Style TargetType="{x:Type Control}" x:Key="BaseStyle">
+        <Setter Property="FontFamily" Value="Microsoft Yahei"/>
+        <Setter Property="Foreground" Value="{StaticResource ForegroundDarkBrush}"/>
+    </Style>
+    
+    <Style TargetType="{x:Type TextBlock}" x:Key="BaseTextBlockStyle">
+        <Setter Property="FontFamily" Value="Microsoft Yahei"/>
+        <Setter Property="Foreground" Value="{StaticResource ForegroundDarkBrush}"/>
+    </Style>
+
+<Style TargetType="{x:Type Button}" BasedOn="{StaticResource BaseStyle}"/>
+    <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource BaseStyle}"/>
+    <Style TargetType="{x:Type Label}" BasedOn="{StaticResource BaseStyle}"/>
+    <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource BaseTextBlockStyle}"/>
+    
+    
+</ResourceDictionary>
