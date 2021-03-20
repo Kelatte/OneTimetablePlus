@@ -2,8 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 
+    <FontFamily x:Key="LatoBlack">pack://application;,,,/Assets/Fonts/#Lato Black</FontFamily>
     <FontFamily x:Key="LatoBold">pack://application;,,,/Assets/Fonts/#Lato Bold</FontFamily>
-
 
     <!--<Setter Property="FontFamily" Value="Microsoft Yahei"/>-->
     <Style TargetType="{x:Type Control}" x:Key="BaseStyle">

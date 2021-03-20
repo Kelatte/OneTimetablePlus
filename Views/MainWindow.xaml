@@ -79,7 +79,8 @@
                     <RowDefinition Height="20"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="{Binding ShortTime}" Style="{StaticResource LargeText}" FontFamily="LatoBold" Margin="5"/>
+                <TextBlock Grid.Row="0" Text="{Binding ShortTime}" 
+                           Style="{StaticResource LargeText}" FontFamily="{StaticResource LatoBold}" Margin="5"/>
                 <StackPanel Grid.Row="1">
                     <ItemsControl ItemsSource="{Binding TodayDayCourse.Courses}">
                         <ItemsControl.ItemTemplate>

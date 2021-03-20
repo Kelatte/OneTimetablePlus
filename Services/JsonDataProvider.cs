@@ -21,6 +21,7 @@ namespace OneTimetablePlus.Services
         /// </summary>
         private readonly string dataPath;
 
+        private bool isUnsaved;
         private DayCourse selectedDayCourse;
 
         /// <summary>
@@ -32,90 +33,29 @@ namespace OneTimetablePlus.Services
 
         #region Public Properties
 
-        public DayCourse SelectedDayCourse
+        //此处直接在属性的set事件中进行RaisePropertyChanged，因为几乎每个操作都会导致改变，都将Raise聚到这里可以减少代码冗余
+        public bool IsUnsaved
         {
-            get => selectedDayCourse;
-            set => Set(ref selectedDayCourse, value);
+            get => isUnsaved;
+            set
+            {
+                if (value != isUnsaved)
+                    Set(ref isUnsaved, value);
+            }
         }
+
+        //此处直接在属性的set事件中进行RaisePropertyChanged，因为View中可以对该属性直接修改而不经过Mothod。但也因此不可以在Method中多次修改
+        public DayCourse SelectedDayCourse { get => selectedDayCourse; set => Set(ref selectedDayCourse, value); }
 
         public WeekCourse SelectedWeek => WholeData.WeekCourses[WholeData.SelectedWeekId];
 
-        public List<DayCourse> DayCourses
-        {
-            get
-            {
-                List<DayCourse> result = new List<DayCourse>(SelectedWeek.DayCourses);
-
-                if (SelectedWeek.CirculatingCourses == null) return result;
-
-                foreach (CirculatingDayCourse circulate in SelectedWeek.CirculatingCourses)
-                {
-                    if (circulate.DayCourses.Count == 0)
-                        continue;
-                    int i = 0;
-                    for (; i < result.Count;)
-                    {
-                        if (result[i].DayName != circulate.DayName)
-                        {
-                            i++;
-                            continue;
-                        }
-                        result.RemoveAt(i);
-                        foreach (var day in circulate.DayCourses)
-                        {
-                            result.Insert(i, day);
-                            i++;
-                        }
-                        break;
-                    }
-
-                }
-                return result;
-            }
-        }
+        public List<DayCourse> AllDayCourses => GetAllDayCourses();
 
         public List<WeekCourse> WeekCourses => WholeData.WeekCourses.ToList();
 
         public List<Course> CourseSpecies => WholeData.CourseSpecies.ToList();
 
-        public DayCourse TodayDayCourse
-        {
-            get
-            {
-                DayCourse result = null;
-
-                //优先用Circulating的课程。根据规则，如果当天CirculatingCourses不为空，则当天普通Course为空
-                if (SelectedWeek.CirculatingCourses != null
-                    && SelectedWeek.CirculatingCourses.Count != 0)
-                {
-                    foreach (CirculatingDayCourse cir in SelectedWeek.CirculatingCourses)
-                    {
-                        if (cir.DayCourses.Count == 0)
-                            continue;
-                        if (cir.DayName == DateTime.Today.DayOfWeek.ToString())
-                        {
-                            int dayGap = (int)(DateTime.Today - cir.CirculatingDate).TotalDays;
-                            int idGap = dayGap / 7;
-                            cir.CirculatingId = (cir.CirculatingId + idGap) % cir.DayCourses.Count;
-                            cir.CirculatingDate = DateTime.Today;
-                            result = cir.DayCourses[cir.CirculatingId];
-                        }
-                    }
-                }
-
-                result ??= SelectedWeek?.DayCourses.First(x => x.DayName == DateTime.Today.DayOfWeek.ToString());
-
-                result.Courses = result.Courses.ToList();
-
-                result = new DayCourse()
-                {
-                    DayName = result.DayName,
-                    Courses = result.Courses,
-                };
-                return result;
-
-            }
-        }
+        public DayCourse TodayDayCourse => GetTodayDayCourse();
 
         public bool WeatherForecastEnabled
         {
@@ -124,7 +64,7 @@ namespace OneTimetablePlus.Services
             {
                 WholeData.WeatherForecastEnabled = value;
                 RaisePropertyChanged(() => WeatherForecastEnabled);
-            } 
+            }
         }
         #endregion
 
@@ -191,13 +131,15 @@ namespace OneTimetablePlus.Services
                 CourseSpecies = new List<Course>(),
                 WeekCourses = new List<WeekCourse>(),
                 SelectedWeekId = 0,
+                WeatherForecastEnabled = false,
             };
             AddWeek("默认周表");
             AddCourseSpecies("全名", "简");
+
         }
         #endregion
 
-        #region Methods
+        #region Public Methods
 
         public void ChangeSelectedWeek(WeekCourse selectedWeek)
         {
@@ -205,9 +147,10 @@ namespace OneTimetablePlus.Services
 
             WholeData.SelectedWeekId = selectedWeekId;
 
-            RaisePropertyChanged(() => DayCourses);
+            RaisePropertyChanged(() => AllDayCourses);
             RaisePropertyChanged(() => TodayDayCourse);
-            
+
+            IsUnsaved = true;
         }
 
         public void AddCirculatingDay()
@@ -217,7 +160,7 @@ namespace OneTimetablePlus.Services
             string dayName = StringFormat.ToDayName(SelectedDayCourse.DayName);
 
             SelectedWeek.CirculatingCourses ??= new List<CirculatingDayCourse>();
-            
+
             //寻找该日的循环表
             CirculatingDayCourse target = SelectedWeek.CirculatingCourses
                 .FirstOrDefault(t => t.DayName == dayName);
@@ -254,16 +197,17 @@ namespace OneTimetablePlus.Services
 
             //传递给ViewModel更新的信息
             //此时 如果由普通课表转为循环课表 会失去当前的选中
-            RaisePropertyChanged(() => DayCourses);
+            RaisePropertyChanged(() => AllDayCourses);
 
             //设置选中为新加的那一项
             SelectedDayCourse = add;
-
 
             if (SelectedDayOfWeek == (int)DateTime.Today.DayOfWeek)
             {
                 RaisePropertyChanged(() => TodayDayCourse);
             }
+
+            IsUnsaved = true;
 
         }
 
@@ -276,13 +220,16 @@ namespace OneTimetablePlus.Services
             circulating.DayCourses.Remove(removeDay);
 
 
-            RaisePropertyChanged(() => DayCourses);
+            RaisePropertyChanged(() => AllDayCourses);
             DayCourse selectDay = SelectedWeek.DayCourses.First(x => x.DayName == dayName);
             SelectedDayCourse = selectDay;
+
             if (SelectedDayOfWeek == (int)DateTime.Today.DayOfWeek)
             {
                 RaisePropertyChanged(() => TodayDayCourse);
             }
+
+            IsUnsaved = true;
 
         }
 
@@ -326,10 +273,12 @@ namespace OneTimetablePlus.Services
             }
             catch (Exception e)
             {
-                
+
                 Debug.Print(e.Message);
                 throw;
             }
+
+            IsUnsaved = false;
         }
 
         public void ReloadFromFile()
@@ -339,9 +288,11 @@ namespace OneTimetablePlus.Services
             // Raise All PropertyChanged
             RaisePropertyChanged(() => SelectedWeek);
             RaisePropertyChanged(() => CourseSpecies);
-            RaisePropertyChanged(() => DayCourses);
+            RaisePropertyChanged(() => AllDayCourses);
             RaisePropertyChanged(() => TodayDayCourse);
             RaisePropertyChanged(() => WeekCourses);
+
+            IsUnsaved = false;
         }
 
         public void AddWeek(string addName)
@@ -366,8 +317,11 @@ namespace OneTimetablePlus.Services
             WholeData.SelectedWeekId = WholeData.WeekCourses.Count - 1;
 
             RaisePropertyChanged(() => WeekCourses);
+
+            IsUnsaved = true;
+
         }
-        
+
         public void DeleteWeek(WeekCourse weekCourse)
         {
 
@@ -400,8 +354,10 @@ namespace OneTimetablePlus.Services
                 {
                     RaisePropertyChanged(() => TodayDayCourse);
                 }
-                RaisePropertyChanged(() => DayCourses);
+                RaisePropertyChanged(() => AllDayCourses);
             }
+
+            IsUnsaved = true;
 
         }
 
@@ -412,6 +368,9 @@ namespace OneTimetablePlus.Services
             WholeData.CourseSpecies.Remove(course);
 
             RaisePropertyChanged(() => CourseSpecies);
+
+            IsUnsaved = true;
+
         }
 
         public void AddCourseSpecies(string fullName, string showName)
@@ -419,34 +378,113 @@ namespace OneTimetablePlus.Services
             WholeData.CourseSpecies.Add(new Course { FullName = fullName, ShowName = showName });
 
             RaisePropertyChanged(() => CourseSpecies);
+
+            IsUnsaved = true;
+
         }
 
         public void DeleteCourse(Course selectedCourse)
         {
             SelectedDayCourse.Courses.Remove(selectedCourse);
 
-            RaisePropertyChanged(() => DayCourses);
+            RaisePropertyChanged(() => AllDayCourses);
             if (SelectedDayOfWeek == (int)DateTime.Today.DayOfWeek)
             {
                 RaisePropertyChanged(() => TodayDayCourse);
             }
+
+            IsUnsaved = true;
+
         }
 
         public void AddCourse(string fullName)
         {
             Course course = (from c in WholeData.CourseSpecies
                              where c.FullName == fullName
-                select c).FirstOrDefault();
+                             select c).FirstOrDefault();
 
             SelectedDayCourse.Courses.Add(course);
 
-            RaisePropertyChanged(() => DayCourses);
+            RaisePropertyChanged(() => AllDayCourses);
             if (SelectedDayOfWeek == (int)DateTime.Today.DayOfWeek)
             {
                 RaisePropertyChanged(() => TodayDayCourse);
             }
+
+            IsUnsaved = true;
+
         }
 
+
+        #endregion
+
+        #region Private Methods
+
+        private List<DayCourse> GetAllDayCourses()
+        {
+            List<DayCourse> result = new List<DayCourse>(SelectedWeek.DayCourses);
+
+            if (SelectedWeek.CirculatingCourses == null) return result;
+
+            foreach (CirculatingDayCourse circulate in SelectedWeek.CirculatingCourses)
+            {
+                if (circulate.DayCourses.Count == 0)
+                    continue;
+                int i = 0;
+                for (; i < result.Count;)
+                {
+                    if (result[i].DayName != circulate.DayName)
+                    {
+                        i++;
+                        continue;
+                    }
+                    result.RemoveAt(i);
+                    foreach (var day in circulate.DayCourses)
+                    {
+                        result.Insert(i, day);
+                        i++;
+                    }
+                    break;
+                }
+
+            }
+            return result;
+        }
+
+        private DayCourse GetTodayDayCourse()
+        {
+            DayCourse result = null;
+
+            //优先用Circulating的课程。根据规则，如果当天CirculatingCourses不为空，则当天普通Course为空
+            if (SelectedWeek.CirculatingCourses != null
+                && SelectedWeek.CirculatingCourses.Count != 0)
+            {
+                foreach (CirculatingDayCourse cir in SelectedWeek.CirculatingCourses)
+                {
+                    if (cir.DayCourses.Count == 0)
+                        continue;
+                    if (cir.DayName == DateTime.Today.DayOfWeek.ToString())
+                    {
+                        int dayGap = (int)(DateTime.Today - cir.CirculatingDate).TotalDays;
+                        int idGap = dayGap / 7;
+                        cir.CirculatingId = (cir.CirculatingId + idGap) % cir.DayCourses.Count;
+                        cir.CirculatingDate = DateTime.Today;
+                        result = cir.DayCourses[cir.CirculatingId];
+                    }
+                }
+            }
+
+            result ??= SelectedWeek?.DayCourses.First(x => x.DayName == DateTime.Today.DayOfWeek.ToString());
+
+            result.Courses = result.Courses.ToList();
+
+            result = new DayCourse()
+            {
+                DayName = result.DayName,
+                Courses = result.Courses,
+            };
+            return result;
+        }
 
         #endregion
     }

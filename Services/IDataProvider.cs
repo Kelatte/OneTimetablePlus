@@ -10,6 +10,10 @@ namespace OneTimetablePlus.Services
 {
     public interface IDataProvider
     {
+        /// <summary>
+        /// 是否改了且未保存
+        /// </summary>
+        bool IsUnsaved { get; set; }
 
         /// <summary>
         /// 删除该课
@@ -77,7 +81,7 @@ namespace OneTimetablePlus.Services
         /// 获取选中周表的 所有日课程
         /// </summary>
         /// <returns></returns>
-        List<DayCourse> DayCourses { get; }
+        List<DayCourse> AllDayCourses { get; }
 
         /// <summary>
         /// 添加循环日表
@@ -114,5 +118,6 @@ namespace OneTimetablePlus.Services
         /// 是否启用天气预报功能
         /// </summary>
         bool WeatherForecastEnabled { get; set; }
+
     }
 }

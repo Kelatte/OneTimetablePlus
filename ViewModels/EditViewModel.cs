@@ -30,6 +30,11 @@ namespace OneTimetablePlus.ViewModels
         #region Public Commmands
 
         /// <summary>
+        /// 关闭前 命令
+        /// </summary>
+        public RelayCommand ClosingCommand { get; set; }
+
+        /// <summary>
         /// 删除该课 命令
         /// </summary>
         public RelayCommand DeleteCourseCommand { get; set; }
@@ -70,7 +75,7 @@ namespace OneTimetablePlus.ViewModels
         public RelayCommand<WeekCourse> DeleteWeekCourseCommand { get; set; }
 
         /// <summary>
-        /// 关闭 命令
+        /// 关闭后 命令
         /// </summary>
         public RelayCommand ClosedCommand { get; set; }
         
@@ -112,7 +117,7 @@ namespace OneTimetablePlus.ViewModels
         /// <summary>
         ///  当前周表的所有日课程
         /// </summary>
-        public List<DayCourse> DayCourses => data.DayCourses;
+        public List<DayCourse> DayCourses => data.AllDayCourses;
 
         /// <summary>
         /// TabControl 选中的日表
@@ -176,7 +181,7 @@ namespace OneTimetablePlus.ViewModels
                 {
                     RaisePropertyChanged(() => WeekCourses);
                 }
-                else if(e.PropertyName == GetPropertyName(() => data.DayCourses))
+                else if(e.PropertyName == GetPropertyName(() => data.AllDayCourses))
                 {
                     RaisePropertyChanged(() => DayCourses);
                 }
@@ -201,6 +206,7 @@ namespace OneTimetablePlus.ViewModels
         /// </summary>
         private void InitializeCommand()
         {
+            ClosingCommand = new RelayCommand(Closing);
             DeleteCourseCommand = new RelayCommand(DeleteCourse, () => SelectedCourse != null);
             AddCourseCommand = new RelayCommand<string>(AddCourse, delegate { return SelectedDayCourse.Courses.Count < 9;});
             AddCourseSpeciesCommand = new RelayCommand(AddCourseSpecies,
@@ -221,6 +227,23 @@ namespace OneTimetablePlus.ViewModels
 
         #region Commmand Methods
 
+        private void Closing()
+        {
+            Debug.Print("EditWindow Closing Command");
+
+            if (data.IsUnsaved)
+            {
+                MessageBoxResult result = MessageBox.Show(
+                    "你有修改尚未保存，是否要保存？",
+                    "是否要保存？",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    Save();
+                }
+            }
+        }
         private void AddCirculatingDay()
         {
             Debug.Print("EditWindow AddCirculatingDay Command");
@@ -241,6 +264,7 @@ namespace OneTimetablePlus.ViewModels
         }
         private void Closed()
         {
+
             Debug.Print("EditWindow Closed Command");
 
             applicationViewModel.EditWindowOpened = false;

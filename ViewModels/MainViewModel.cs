@@ -106,7 +106,7 @@ namespace OneTimetablePlus.ViewModels
 
         public string WeatherVisibility => data.WeatherForecastEnabled ? "Visible" : "Collapsed";
 
-        public List<WeatherHourly>
+        //public List<WeatherHourly>
         #endregion
 
     }

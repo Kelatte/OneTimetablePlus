@@ -9,13 +9,16 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:cmd="http://www.galasoft.ch/mvvmlight"
         mc:Ignorable="d"
-        Title="EditWindow" Height="700" Width="430"
+        Title="EditWindow" Height="Auto" Width="Auto"
+        SizeToContent="WidthAndHeight"
         DataContext="{Binding Edit, Source={StaticResource Locator}}">
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closed">
-            <cmd:EventToCommand Command="{Binding Mode=OneWay, Path=ClosedCommand}"
-                                PassEventArgsToCommand="False" />
+            <cmd:EventToCommand Command="{Binding ClosedCommand}" PassEventArgsToCommand="False" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closing">
+            <cmd:EventToCommand Command="{Binding ClosingCommand}" PassEventArgsToCommand="False" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
@@ -117,7 +120,8 @@
 
                     <!-- 显示课表 TabControl -->
                     <TabControl ItemsSource="{Binding DayCourses}" 
-                                SelectedItem="{Binding SelectedDayCourse}">
+                                SelectedItem="{Binding SelectedDayCourse}"
+                                Width="390">
 
                         <!--<i:Interaction.Behaviors>
                             <resources:PersistentSelectionBehavior />
