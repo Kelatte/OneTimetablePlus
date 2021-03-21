@@ -10,6 +10,8 @@ namespace OneTimetablePlus.Services
 {
     public interface IDataProvider
     {
+        event PropertyChangedEventHandler PropertyChanged;
+
         /// <summary>
         /// 是否改了且未保存
         /// </summary>
@@ -59,7 +61,7 @@ namespace OneTimetablePlus.Services
         /// </summary>
         void DeleteWeek(WeekCourse weekCourse);
 
-        event PropertyChangedEventHandler PropertyChanged;
+
         
         /// <summary>
         /// 选中的周表

@@ -1,0 +1,70 @@
+﻿<Page x:Class="OneTimetablePlus.Resources.Pages.DayCoursePresentPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:OneTimetablePlus.Resources.Pages"
+      xmlns:converters="clr-namespace:OneTimetablePlus.ValueConverters"
+      xmlns:resources="clr-namespace:OneTimetablePlus.Resources"
+      mc:Ignorable="d" 
+      DataContext="{Binding DayCoursePresent, Source={StaticResource Locator}}"
+      d:DesignHeight="871.2605042016806" d:DesignWidth="91.49"
+      Title="DayCoursePresentPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="{Binding ShortTime}" 
+                           Style="{StaticResource LargeText}" FontFamily="{StaticResource LatoBold}" Margin="5"/>
+        <StackPanel Grid.Row="1">
+            <ItemsControl ItemsSource="{Binding TodayDayCourse.Courses}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <Line X1="80" HorizontalAlignment="Center"
+                                      StrokeThickness="2"
+                                      Stroke="{StaticResource ForegroundLightBrush}"/>
+                            <TextBlock Text="{Binding ShowName}" Style="{StaticResource LargerText}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Visibility="{Binding WeatherVisibility}" >
+            <TextBlock Text="明日天气预报" Style="{StaticResource SmallerText}"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.Resources>
+                    <Style TargetType="{x:Type Image}">
+                        <Setter Property="Effect">
+                            <Setter.Value>
+                                <resources:ChangeColorEffect/>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Grid.Resources>
+
+                <Image Grid.Column="0" Source="{Binding WeatherInfo.IconDay, Converter={converters:IconIdToImageConverter}}"/>
+
+                <Image Grid.Column="2" Source="{Binding WeatherInfo.IconNight, Converter={converters:IconIdToImageConverter}}"/>
+
+                <Line Grid.Column="1" Y1="35" VerticalAlignment="Center" HorizontalAlignment="Center"
+                      StrokeThickness="1.5"
+                      Stroke="{StaticResource ForegroundLightBrush}"/>
+            </Grid>
+            <TextBlock Text="{Binding TemperatureInfo}" Style="{StaticResource SmallerText}"/>
+
+        </StackPanel>
+    </Grid>
+</Page>

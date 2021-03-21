@@ -1,32 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Threading.Tasks;
+using GalaSoft.MvvmLight;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OneTimetablePlus.Models;
 
-namespace OneTimetablePlus.Helper
+namespace OneTimetablePlus.Services
 {
-    class Weather
+    class WeatherDataProvider : ObservableObject, IWeatherDataProvider
     {
-        //test git : some code
+        #region Constructers
+        
+        public WeatherDataProvider(IDataProvider dataProvider)
+        {
+            data = dataProvider;
+
+            //初始化city之类的
+#if DEBUG
+            id = "101210205";
+#endif
+        }
+        #endregion
+
+        #region Private Members
+
         private const string Key = "368b03f9e5974d50ac89f74fe70e1049";
+
+        private readonly IDataProvider data;
 
         private string city;
         private string region;
         private string id;
 
-        public async Task GetLocation()
+        private List<WeatherDailyInfo> weather3d;
+        private List<WeatherDailyInfo> weather7d;
+
+        #endregion
+
+        #region Public Properties
+
+        public WeatherDailyInfo WeatherTomorrow => weather3d?[1];
+        public List<WeatherDailyInfo> Weather7d => weather7d;
+
+        #endregion
+
+        #region Public Methods
+
+        public async Task RefreshWeather()
         {
-            HttpClient httpClient = new HttpClient() {Timeout = TimeSpan.FromSeconds(3)};
+            //TODO: 暂时全部刷新，后来再分3d和7d刷新
+            weather3d = await Get3dWeather();
+            weather7d = await Get7dWeather();
+
+            RaisePropertyChanged(() => WeatherTomorrow);
+            RaisePropertyChanged(() => Weather7d);
+        }
+
+        public async Task RefreshLocation()
+        {
+            await RefreshLocationId();
+        }
+        #endregion
+
+        #region Private Methods
+
+        private async Task RefreshCidyRegion()
+        {
+            HttpClient httpClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(3) };
             string uri = "http://ip-api.com/json/";
             HttpResponseMessage response = await httpClient.GetAsync(uri);
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
             JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
-            string status = (string) responseJson?["status"];
+            string status = (string)responseJson?["status"];
             if (status != "success")
             {
                 Exception e = new Exception($"城市位置获取错误, status = {status}");
@@ -36,10 +85,10 @@ namespace OneTimetablePlus.Helper
             region = responseJson?["regionName"]?.ToString().Replace(" ", "");
         }
 
-        public async Task GetLocationId()
+        private async Task RefreshLocationId()
         {
             if (city == null || region == null)
-                await GetLocation();
+                await RefreshCidyRegion();
             HttpClientHandler handler = new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.GZip };
             HttpClient httpClient = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(3) };
             string uri = "https://geoapi.qweather.com/v2/city/lookup?key={2}&location={0}&range=cn&adm={1}";
@@ -58,15 +107,17 @@ namespace OneTimetablePlus.Helper
 
         }
 
-        public async Task<List<WeatherDayInfo>> Get3dWeather()
+        private async Task<List<WeatherDailyInfo>> GetDaysWeather(int dayNumber)
         {
+            if (dayNumber != 3 && dayNumber != 7)
+                return null;
             if (id == null)
-                await GetLocationId();
-            HttpClientHandler handler = new HttpClientHandler() {AutomaticDecompression = DecompressionMethods.GZip};
-            HttpClient httpClient = new HttpClient(handler) {Timeout = TimeSpan.FromSeconds(3)};
+                await RefreshLocationId();
+            string uri = "https://devapi.qweather.com/v7/weather/{2}d?location={0}&key={1}";
+            uri = string.Format(uri, id, Key, dayNumber.ToString());
 
-            string uri = "https://devapi.qweather.com/v7/weather/3d?location={0}&key={1}";
-            uri = string.Format(uri, id, Key);
+            HttpClientHandler handler = new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.GZip };
+            HttpClient httpClient = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(3) };
             HttpResponseMessage response = await httpClient.GetAsync(uri);
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
@@ -78,7 +129,7 @@ namespace OneTimetablePlus.Helper
                 throw e;
             }
             JArray days = responseJson?["daily"] as JArray;
-            List<WeatherDayInfo> result = new List<WeatherDayInfo>();
+            List<WeatherDailyInfo> result = new List<WeatherDailyInfo>();
             if (days == null)
             {
                 Exception e = new Exception("天气预报获取错误 \r\n uri = {uri} \r\n " + nameof(days) + " == null");
@@ -86,15 +137,15 @@ namespace OneTimetablePlus.Helper
             }
             foreach (JToken day in days)
             {
-                WeatherDayInfo info = new WeatherDayInfo
+                WeatherDailyInfo info = new WeatherDailyInfo
                 {
-                    TempMax = (string) day["tempMax"],
-                    TempMin = (string) day["tempMin"],
-                    FxDate = (DateTime) day["fxDate"],
-                    IconDay = (string) day["iconDay"],
-                    TextDay = (string) day["textDay"],
-                    IconNight = (string) day["iconNight"],
-                    TextNight = (string) day["textNight"]
+                    TempMax = (string)day["tempMax"],
+                    TempMin = (string)day["tempMin"],
+                    FxDate = (DateTime)day["fxDate"],
+                    IconDay = (string)day["iconDay"],
+                    TextDay = (string)day["textDay"],
+                    IconNight = (string)day["iconNight"],
+                    TextNight = (string)day["textNight"]
                 };
                 result.Add(info);
             }
@@ -104,22 +155,16 @@ namespace OneTimetablePlus.Helper
 
         }
 
-    }
-    public class WeatherDayInfo
-    {
-        public DateTime FxDate { get; set; }
-        public string TempMax { get; set; }
-        public string TempMin { get; set; }
-        public string IconDay { get; set; }
-        public string TextDay { get; set; }
-        public string IconNight { get; set; }
-        public string TextNight { get; set; }
+        private async Task<List<WeatherDailyInfo>> Get3dWeather()
+        {
+            return await GetDaysWeather(3);
+        }
 
-    }
-    public class WeahterHourlyInfo
-    {
-        public DateTime FxDate { get; set; }
-        public string Temp { get; set; }
-        public string Text { get; set; }
+        private async Task<List<WeatherDailyInfo>> Get7dWeather()
+        {
+            return await GetDaysWeather(7);
+        }
+        #endregion
+
     }
 }

@@ -30,10 +30,13 @@ namespace OneTimetablePlus.ViewModels
             ////    SimpleIoc.Default.Register<IDataService, DataService>();
             ////}
             SimpleIoc.Default.Register<IDataProvider, JsonDataProvider>();
+            SimpleIoc.Default.Register<IWeatherDataProvider, WeatherDataProvider>();
             SimpleIoc.Default.Register<ApplicationViewModel>();
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<EditViewModel>();
             SimpleIoc.Default.Register<TaskbarIconViewModel>();
+            SimpleIoc.Default.Register<DayCoursePresentViewModel>();
+            SimpleIoc.Default.Register<WeatherViewModel>();
         }
 
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
@@ -41,6 +44,10 @@ namespace OneTimetablePlus.ViewModels
         public EditViewModel Edit => ServiceLocator.Current.GetInstance<EditViewModel>();
 
         public TaskbarIconViewModel TaskbarIcon => ServiceLocator.Current.GetInstance<TaskbarIconViewModel>();
+
+        public DayCoursePresentViewModel DayCoursePresent => ServiceLocator.Current.GetInstance<DayCoursePresentViewModel>();
+
+        public WeatherViewModel Weather => ServiceLocator.Current.GetInstance<WeatherViewModel>();
 
         public static void Cleanup()
         {

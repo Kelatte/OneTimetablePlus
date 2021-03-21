@@ -19,14 +19,6 @@ namespace OneTimetablePlus.Views
             InitializeComponent();
             Debug.Print("MainWindow Initialized");
 
-            //InitPosition();
-        }
-
-        private void InitPosition()
-        {
-            Rect workArea = System.Windows.SystemParameters.WorkArea;
-            this.Left = 0;
-            this.Top = (workArea.Height - this.Height) / 2 + workArea.Top;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

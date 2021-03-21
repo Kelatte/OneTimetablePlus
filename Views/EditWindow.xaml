@@ -123,10 +123,6 @@
                                 SelectedItem="{Binding SelectedDayCourse}"
                                 Width="390">
 
-                        <!--<i:Interaction.Behaviors>
-                            <resources:PersistentSelectionBehavior />
-                        </i:Interaction.Behaviors>-->
-
                         <TabControl.ItemTemplate>
                             <HierarchicalDataTemplate >
                                 <TextBlock Text="{Binding DayName}" Style="{StaticResource SmallText}"/>
