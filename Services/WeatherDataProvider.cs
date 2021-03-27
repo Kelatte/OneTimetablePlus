@@ -139,12 +139,12 @@ namespace OneTimetablePlus.Services
             {
                 WeatherDailyInfo info = new WeatherDailyInfo
                 {
-                    TempMax = (string)day["tempMax"],
-                    TempMin = (string)day["tempMin"],
+                    TempMax = (int)day["tempMax"],
+                    TempMin = (int)day["tempMin"],
                     FxDate = (DateTime)day["fxDate"],
-                    IconDay = (string)day["iconDay"],
+                    IconDay = (int)day["iconDay"],
                     TextDay = (string)day["textDay"],
-                    IconNight = (string)day["iconNight"],
+                    IconNight = (int)day["iconNight"],
                     TextNight = (string)day["textNight"]
                 };
                 result.Add(info);

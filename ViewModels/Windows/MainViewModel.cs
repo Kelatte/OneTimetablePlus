@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Threading;
 using OneTimetablePlus.Models;
-using OneTimetablePlus.Helper;
+using OneTimetablePlus.ViewModels.Application;
 using System.Net.Http;
 using System.Windows;
 
@@ -18,12 +18,20 @@ namespace OneTimetablePlus.ViewModels.Windows
     {
         #region Constructor
 
-        public MainViewModel(IDataProvider dataProvider)
+        public MainViewModel(ApplicationViewModel applicationViewModel, IDataProvider dataProvider)
         {
+            application = applicationViewModel;
             data = dataProvider;
 
-
+            application.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == GetPropertyName(() => application.MainCurrentPage))
+                {
+                    RaisePropertyChanged(nameof(CurrentPage));
+                }
+            };
         }
+
 
         #endregion
 
@@ -31,11 +39,12 @@ namespace OneTimetablePlus.ViewModels.Windows
 
         private readonly IDataProvider data;
 
+        private readonly ApplicationViewModel application;
         #endregion
 
-        #region Public Proprities
+        #region Public Properties
 
-        public ApplicationPage CurrentPage { get; set; } = 0;
+        public ApplicationPage CurrentPage => application.MainCurrentPage;
 
         #endregion
 

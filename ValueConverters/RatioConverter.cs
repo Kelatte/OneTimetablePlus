@@ -10,7 +10,7 @@ namespace OneTimetablePlus.ValueConverters
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Debug.WriteLine((double)value);
+            //Debug.WriteLine((double)value);
             double size = System.Convert.ToDouble(value) * System.Convert.ToDouble(parameter, CultureInfo.InvariantCulture);
             return size.ToString("G0", CultureInfo.InvariantCulture);
         }

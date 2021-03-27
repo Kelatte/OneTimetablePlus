@@ -4,6 +4,9 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:OneTimetablePlus.Resources.Pages"
+      xmlns:converters="clr-namespace:OneTimetablePlus.ValueConverters"
+      xmlns:resources="clr-namespace:OneTimetablePlus.Resources"
+      xmlns:uc="clr-namespace:OneTimetablePlus.Views.UserControls"
       mc:Ignorable="d" 
       DataContext="{Binding Weather, Source={StaticResource Locator}}"
       d:DesignHeight="871.2605042016806" d:DesignWidth="91.49"
@@ -37,11 +40,7 @@
                         StrokeThickness="2"
                         Stroke="{StaticResource ForegroundLightBrush}"/>
                 </StackPanel>
-                -->
-    <Grid>
-        <ItemsControl>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
+    
                     <StackPanel>
                         <TextBlock Text="15:00" Style="{StaticResource MiddleText}"/>
                         <TextBlock Text="小雨 15°" Style="{StaticResource SmallText}"/>
@@ -49,9 +48,31 @@
                                       StrokeThickness="2"
                                       Stroke="{StaticResource ForegroundLightBrush}"/>
                     </StackPanel>
+                -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding ItemViewModels}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <uc:WeatherDaily/>
+
+                        <Line Margin="7" X1="80" HorizontalAlignment="Center"
+                                      StrokeThickness="2"
+                                      Stroke="{StaticResource ForegroundLightBrush}"/>
+                    </StackPanel>
+                    
+                    
+                    
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
+        <Button Grid.Row="3" Content="返回" Command="{Binding BackCommand}" Style="{StaticResource MidButton}"/>
     </Grid>
 </Page>

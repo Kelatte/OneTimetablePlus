@@ -11,12 +11,12 @@ namespace OneTimetablePlus.ValueConverters
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Debug.Print("IconId" + value.ToString());
-            if (value == null || (string) value == "")
+            //Debug.Print("IconId" + value.ToString());
+            if (value == null || (int)value == 0)
                 return null;
             
             
-            return new BitmapImage(new Uri($"/OneTimetablePlus;component/Assets/WeatherIcon/{(string) value}.png", UriKind.Relative));
+            return new BitmapImage(new Uri($"/OneTimetablePlus;component/Assets/WeatherIcon/{value}.png", UriKind.Relative));
         }
 
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

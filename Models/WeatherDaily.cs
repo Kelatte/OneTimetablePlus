@@ -7,11 +7,11 @@ namespace OneTimetablePlus.Models
     public class WeatherDailyInfo
     {
         public DateTime FxDate { get; set; }
-        public string TempMax { get; set; }
-        public string TempMin { get; set; }
-        public string IconDay { get; set; }
+        public int TempMax { get; set; }
+        public int TempMin { get; set; }
+        public int IconDay { get; set; }
         public string TextDay { get; set; }
-        public string IconNight { get; set; }
+        public int IconNight { get; set; }
         public string TextNight { get; set; }
 
     }

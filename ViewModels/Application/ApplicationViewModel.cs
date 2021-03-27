@@ -5,7 +5,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Windows;
-using OneTimetablePlus.Views;
+using OneTimetablePlus.Views.Windows;
+using OneTimetablePlus.Models;
 
 namespace OneTimetablePlus.ViewModels.Application
 {
@@ -74,8 +75,17 @@ namespace OneTimetablePlus.ViewModels.Application
             }
         }
 
+        /// <summary>
+        /// Main窗口目前的页
+        /// </summary>
+        public ApplicationPage MainCurrentPage { get; private set; } = ApplicationPage.DayCoursePresent;
         #endregion
 
+        #region Public Methods
+
+        /// <summary>
+        /// 关闭整个程序
+        /// </summary>
         public void ShutDown()
         {
             MainWindowOpened = false;
@@ -83,5 +93,15 @@ namespace OneTimetablePlus.ViewModels.Application
             System.Windows.Application.Current.Shutdown();
             //Application.Current.Shutdown();
         }
+
+        public void GotoMainPage(ApplicationPage page)
+        {
+            if (page == MainCurrentPage)
+                return;
+
+            MainCurrentPage = page;
+            RaisePropertyChanged(nameof(MainCurrentPage));
+        }
+        #endregion
     }
 }

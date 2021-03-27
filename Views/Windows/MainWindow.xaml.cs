@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 using System.Drawing;
 using WpfAppBar;
 
-namespace OneTimetablePlus.Views
+namespace OneTimetablePlus.Views.Windows
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -17,7 +17,7 @@ namespace OneTimetablePlus.Views
         public MainWindow()
         {
             InitializeComponent();
-            Debug.Print("MainWindow Initialized");
+            //Debug.Print("MainWindow Initialized");
 
         }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,21 +8,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace OneTimetablePlus.Views.Windows
+namespace OneTimetablePlus.Views.UserControls
 {
     /// <summary>
-    /// Interaction logic for EditWindow.xaml
+    /// Interaction logic for WeatherDaily.xaml
     /// </summary>
-    public partial class EditWindow : Window
+    public partial class WeatherDaily : UserControl
     {
-        public EditWindow()
+        public WeatherDaily()
         {
             InitializeComponent();
-
-            Debug.Print("EditWindow Initialized");
-
         }
     }
 }

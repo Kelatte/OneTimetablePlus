@@ -1,4 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
+
 using OneTimetablePlus.Services;
 using System.Collections.Generic;
 using System;
@@ -8,7 +10,8 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Threading;
 using OneTimetablePlus.Models;
-using OneTimetablePlus.Helper;
+using OneTimetablePlus.ViewModels.Application;
+using OneTimetablePlus.ViewModels.UserControls;
 using System.Net.Http;
 using System.Windows;
 
@@ -18,12 +21,15 @@ namespace OneTimetablePlus.ViewModels.Pages
     {
         #region Constructor
 
-        public DayCoursePresentViewModel(IDataProvider dataProvider, IWeatherDataProvider weatherProvider)
+        public DayCoursePresentViewModel(ApplicationViewModel applicationViewModel, IDataProvider dataProvider, IWeatherDataProvider weatherProvider)
         {
+            application = applicationViewModel;
             data = dataProvider;
             weather = weatherProvider;
 
             InitializeListener();
+
+            GoToWeatherPageCommand = new RelayCommand(GoToWeatherPage);
 
             //TODO: 仅在窗口打开后才执行下面语句
             InitTime();
@@ -55,8 +61,7 @@ namespace OneTimetablePlus.ViewModels.Pages
             {
                 if (e.PropertyName == GetPropertyName(() => weather.WeatherTomorrow))
                 {
-                    RaisePropertyChanged(() => WeatherInfo);
-                    RaisePropertyChanged(() => TemperatureInfo);
+                    RaisePropertyChanged(() => WeatherViewModel);
                 }
             };
         }
@@ -81,7 +86,7 @@ namespace OneTimetablePlus.ViewModels.Pages
 
         private async void InitWeather()
         {
-            Debug.Print("InitWeather called");
+            //Debug.Print("InitWeather called");
 
             try
             {
@@ -103,9 +108,11 @@ namespace OneTimetablePlus.ViewModels.Pages
         private readonly IDataProvider data;
 
         private readonly IWeatherDataProvider weather;
+
+        private readonly ApplicationViewModel application;
         #endregion
 
-        #region Public Proprities
+        #region Public Properties
 
         /// <summary>
         /// 今日课表
@@ -114,13 +121,35 @@ namespace OneTimetablePlus.ViewModels.Pages
 
         public string ShortTime => DateTime.Now.ToString("HH:mm");
 
-        public WeatherDailyInfo WeatherInfo => weather.WeatherTomorrow;
-
-        public string TemperatureInfo => $"气温 {WeatherInfo?.TempMin} ~ {WeatherInfo?.TempMax}℃";
+        public WeatherDailyViewModel WeatherViewModel
+        {
+            get
+            {
+                if (weather.WeatherTomorrow != null)
+                {
+                    return new WeatherDailyViewModel(weather.WeatherTomorrow);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
 
         public string WeatherVisibility => data.WeatherForecastEnabled ? "Visible" : "Collapsed";
 
+        public RelayCommand GoToWeatherPageCommand { get; set; }
+
         //public List<WeatherHourly>
+        #endregion
+
+        #region Private Methods
+        
+        private void GoToWeatherPage()
+        {
+            //Debug.Print("GoToWeatherPage Called");
+            application.GotoMainPage(ApplicationPage.WeatherNarrow);
+        }
         #endregion
     }
 }

@@ -10,6 +10,7 @@ namespace OneTimetablePlus.Services
     {
         event PropertyChangedEventHandler PropertyChanged;
 
+        public List<WeatherDailyInfo> Weather7d { get; }
 
         public WeatherDailyInfo WeatherTomorrow { get; }
 

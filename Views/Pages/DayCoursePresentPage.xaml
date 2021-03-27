@@ -4,8 +4,11 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:OneTimetablePlus.Resources.Pages"
+      xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+      xmlns:cmd="http://www.galasoft.ch/mvvmlight"
       xmlns:converters="clr-namespace:OneTimetablePlus.ValueConverters"
       xmlns:resources="clr-namespace:OneTimetablePlus.Resources"
+      xmlns:uc="clr-namespace:OneTimetablePlus.Views.UserControls"
       mc:Ignorable="d" 
       DataContext="{Binding DayCoursePresent, Source={StaticResource Locator}}"
       d:DesignHeight="871.2605042016806" d:DesignWidth="91.49"
@@ -37,7 +40,16 @@
             </ItemsControl>
         </StackPanel>
 
-        <StackPanel Grid.Row="3" Visibility="{Binding WeatherVisibility}" >
+        
+        <StackPanel Grid.Row="3" Visibility="{Binding WeatherVisibility}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDown">
+                    <cmd:EventToCommand Command="{Binding GoToWeatherPageCommand}" PassEventArgsToCommand="False" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+
+            <uc:WeatherDaily DataContext="{Binding WeatherViewModel}"/>
+            <!--
             <TextBlock Text="明日天气预报" Style="{StaticResource SmallerText}"/>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -63,7 +75,10 @@
                       StrokeThickness="1.5"
                       Stroke="{StaticResource ForegroundLightBrush}"/>
             </Grid>
-            <TextBlock Text="{Binding TemperatureInfo}" Style="{StaticResource SmallerText}"/>
+            <TextBlock Text="{Binding TemperatureInfo}" Style="{StaticResource SmallerText}"/>            
+            
+            -->
+            
 
         </StackPanel>
     </Grid>
