@@ -7,7 +7,7 @@ using System.Text;
 using System.Windows;
 using OneTimetablePlus.Views;
 
-namespace OneTimetablePlus.ViewModels
+namespace OneTimetablePlus.ViewModels.Application
 {
     public class ApplicationViewModel : ViewModelBase
     {
@@ -80,7 +80,8 @@ namespace OneTimetablePlus.ViewModels
         {
             MainWindowOpened = false;
             EditWindowOpened = false;
-            Application.Current.Shutdown();
+            System.Windows.Application.Current.Shutdown();
+            //Application.Current.Shutdown();
         }
     }
 }

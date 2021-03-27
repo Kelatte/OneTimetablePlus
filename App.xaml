@@ -10,7 +10,7 @@
 
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary>
-                    <vm:ViewModelLocator x:Key="Locator" xmlns:vm="clr-namespace:OneTimetablePlus.ViewModels"/>
+                    <vm:ViewModelLocator x:Key="Locator" xmlns:vm="clr-namespace:OneTimetablePlus.ViewModels.Application"/>
                 </ResourceDictionary>
                 <ResourceDictionary Source="Styles/Colors.xaml"/>
                 <ResourceDictionary Source="Styles/Fonts.xaml"/>

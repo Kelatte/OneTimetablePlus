@@ -1,10 +1,13 @@
 using CommonServiceLocator;
+
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 
 using OneTimetablePlus.Services;
+using OneTimetablePlus.ViewModels.Pages;
+using OneTimetablePlus.ViewModels.Windows;
 
-namespace OneTimetablePlus.ViewModels
+namespace OneTimetablePlus.ViewModels.Application
 {
     /// <summary>
     /// This class contains static references to all the view models in the

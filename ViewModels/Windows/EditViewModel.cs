@@ -12,8 +12,9 @@ using GalaSoft.MvvmLight.CommandWpf;
 using OneTimetablePlus.Services;
 using OneTimetablePlus.Helper;
 using OneTimetablePlus.Models;
+using OneTimetablePlus.ViewModels.Application;
 
-namespace OneTimetablePlus.ViewModels
+namespace OneTimetablePlus.ViewModels.Windows
 {
     public class EditViewModel : ViewModelBase
     {
@@ -78,7 +79,7 @@ namespace OneTimetablePlus.ViewModels
         /// 关闭后 命令
         /// </summary>
         public RelayCommand ClosedCommand { get; set; }
-        
+
         /// <summary>
         /// 新加循环课表 命令
         /// </summary>
@@ -133,7 +134,7 @@ namespace OneTimetablePlus.ViewModels
         /// TabControl 中的 ListBox选中的课程
         /// </summary>
         public Course SelectedCourse { get; set; }
-    
+
 
         /// <summary>
         /// 新加课种 全名
@@ -148,8 +149,8 @@ namespace OneTimetablePlus.ViewModels
         /// <summary>
         /// 是否开机自启
         /// </summary>
-        public bool IsAutoStart 
-        { 
+        public bool IsAutoStart
+        {
             get => AutoStart.IfAutoStart();
             set => AutoStart.ChangeAutoStart(value);
         }
@@ -181,7 +182,7 @@ namespace OneTimetablePlus.ViewModels
                 {
                     RaisePropertyChanged(() => WeekCourses);
                 }
-                else if(e.PropertyName == GetPropertyName(() => data.AllDayCourses))
+                else if (e.PropertyName == GetPropertyName(() => data.AllDayCourses))
                 {
                     RaisePropertyChanged(() => DayCourses);
                 }
@@ -197,7 +198,7 @@ namespace OneTimetablePlus.ViewModels
                 {
                     RaisePropertyChanged(() => WeatherForecastEnabled);
                 }
-                
+
             };
         }
 
@@ -208,7 +209,7 @@ namespace OneTimetablePlus.ViewModels
         {
             ClosingCommand = new RelayCommand(Closing);
             DeleteCourseCommand = new RelayCommand(DeleteCourse, () => SelectedCourse != null);
-            AddCourseCommand = new RelayCommand<string>(AddCourse, delegate { return SelectedDayCourse.Courses.Count < 9;});
+            AddCourseCommand = new RelayCommand<string>(AddCourse, delegate { return SelectedDayCourse.Courses.Count < 9; });
             AddCourseSpeciesCommand = new RelayCommand(AddCourseSpecies,
                 () => !string.IsNullOrEmpty(NewCourseSpeciesShowName) && !string.IsNullOrEmpty(NewCourseSpeciesFullName));
             DeleteCourseSpeciesCommand = new RelayCommand<string>(DeleteCourseSpecies,
@@ -276,7 +277,7 @@ namespace OneTimetablePlus.ViewModels
         private void DeleteCourse()
         {
             Debug.Print($"Delete course");
-            
+
             data.DeleteCourse(SelectedCourse);
         }
 
@@ -317,7 +318,7 @@ namespace OneTimetablePlus.ViewModels
         private void Save()
         {
             Debug.Print("Save command");
-            
+
             data.Save();
 
         }

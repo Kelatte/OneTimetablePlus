@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
 
 using OneTimetablePlus.Services;
+using OneTimetablePlus.ViewModels.Application;
 using OneTimetablePlus.Views;
 
 using System;

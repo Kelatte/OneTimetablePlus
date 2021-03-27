@@ -12,7 +12,7 @@ using OneTimetablePlus.Helper;
 using System.Net.Http;
 using System.Windows;
 
-namespace OneTimetablePlus.ViewModels
+namespace OneTimetablePlus.ViewModels.Pages
 {
     public class DayCoursePresentViewModel : ViewModelBase
     {
@@ -93,7 +93,7 @@ namespace OneTimetablePlus.ViewModels
                 MessageBox.Show("请检查您的网络是否通畅\r\n" + e.Message, "网络错误");
             }
 
-            
+
 
         }
 

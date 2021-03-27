@@ -12,7 +12,7 @@ using OneTimetablePlus.Helper;
 using System.Net.Http;
 using System.Windows;
 
-namespace OneTimetablePlus.ViewModels
+namespace OneTimetablePlus.ViewModels.Windows
 {
     public class MainViewModel : ViewModelBase
     {
@@ -22,7 +22,7 @@ namespace OneTimetablePlus.ViewModels
         {
             data = dataProvider;
 
-           
+
         }
 
         #endregion

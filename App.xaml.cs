@@ -14,9 +14,9 @@ using Newtonsoft.Json.Converters;
 using System.Diagnostics;
 using OneTimetablePlus.Services;
 using Hardcodet.Wpf.TaskbarNotification;
-using OneTimetablePlus.ViewModels;
 using GalaSoft.MvvmLight.Ioc;
 using OneTimetablePlus.Helper;
+using OneTimetablePlus.ViewModels.Application;
 
 namespace OneTimetablePlus
 {
