@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="OneTimetablePlus.Views.UserControls.WeatherHourly"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:OneTimetablePlus.Views.UserControls"
+             mc:Ignorable="d" 
+             xmlns:converters="clr-namespace:OneTimetablePlus.ValueConverters"
+             xmlns:resources="clr-namespace:OneTimetablePlus.Resources"
+             d:DesignHeight="100" d:DesignWidth="91.49">
+    <StackPanel>
+        <TextBlock Text="{Binding Title}" Style="{StaticResource SmallerText}"/>
+        <TextBlock Text="{Binding RainInfo}" Style="{StaticResource SmallerText}"/>
+        <TextBlock Text="{Binding TemperatureInfo}" Style="{StaticResource SmallerText}"/>
+    </StackPanel>
+</UserControl>

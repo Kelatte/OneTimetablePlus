@@ -121,5 +121,9 @@ namespace OneTimetablePlus.Services
         /// </summary>
         bool WeatherForecastEnabled { get; set; }
 
+        /// <summary>
+        /// 天气预报默认地点 CityName
+        /// </summary>
+        string WeatherForecastLocation { get; set; }
     }
 }

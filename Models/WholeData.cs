@@ -11,8 +11,6 @@ namespace OneTimetablePlus.Models
     public class WholeData : ObservableObject
     {
 
-        #region Public Properties
-
         /// <summary>
         /// 所有周表
         /// </summary>
@@ -37,7 +35,13 @@ namespace OneTimetablePlus.Models
         /// 是否启用天气预报
         /// </summary>
         public bool WeatherForecastEnabled { get; set; }
-        #endregion
+
+        /// <summary>
+        /// 天气预报默认地点 CityName
+        /// </summary>
+        public string WeatherForecastLocation { get; set; }
+
+        // TODO: 整合三个天气的配置进一个新的类
     }
 
     public class DataDescription

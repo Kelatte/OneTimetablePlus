@@ -26,6 +26,8 @@ namespace OneTimetablePlus.ViewModels.Windows
         private readonly IDataProvider data;
 
         private readonly ApplicationViewModel applicationViewModel;
+
+        private readonly IWeatherDataProvider weather;
         #endregion
 
         #region Public Commmands
@@ -94,6 +96,15 @@ namespace OneTimetablePlus.ViewModels.Windows
 
         #region Public Properties
 
+
+        public string WeatherCurrentLocation => weather.CityName;
+
+        public string WeatherLocation
+        {
+            get => data.WeatherForecastLocation;
+            set => data.WeatherForecastLocation = value;
+        }
+
         public bool WeatherForecastEnabled
         {
             get => data.WeatherForecastEnabled;
@@ -158,10 +169,11 @@ namespace OneTimetablePlus.ViewModels.Windows
 
         #region Constructor
 
-        public EditViewModel(IDataProvider data, ApplicationViewModel applicationViewModel)
+        public EditViewModel(IDataProvider data, ApplicationViewModel applicationViewModel, IWeatherDataProvider weather)
         {
             this.data = data;
             this.applicationViewModel = applicationViewModel;
+            this.weather = weather;
 
             InitializeListener();
             InitializeCommand();
@@ -198,7 +210,18 @@ namespace OneTimetablePlus.ViewModels.Windows
                 {
                     RaisePropertyChanged(() => WeatherForecastEnabled);
                 }
+                else if (e.PropertyName == GetPropertyName(() => data.WeatherForecastLocation))
+                {
+                    RaisePropertyChanged(() => WeatherLocation);
+                }
+            };
 
+            weather.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == GetPropertyName(() => weather.CityName))
+                {
+                    RaisePropertyChanged(() => WeatherCurrentLocation);
+                }
             };
         }
 
@@ -231,7 +254,7 @@ namespace OneTimetablePlus.ViewModels.Windows
         private void Closing()
         {
             Debug.Print("EditWindow Closing Command");
-
+            
             if (data.IsUnsaved)
             {
                 MessageBoxResult result = MessageBox.Show(

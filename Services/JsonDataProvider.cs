@@ -62,10 +62,23 @@ namespace OneTimetablePlus.Services
             get => WholeData.WeatherForecastEnabled;
             set
             {
+                IsUnsaved = true;
                 WholeData.WeatherForecastEnabled = value;
                 RaisePropertyChanged(() => WeatherForecastEnabled);
             }
         }
+
+        public string WeatherForecastLocation
+        {
+            get => WholeData.WeatherForecastLocation;
+            set
+            {
+                IsUnsaved = true;
+                WholeData.WeatherForecastLocation = value;
+                RaisePropertyChanged(() => WeatherForecastLocation);
+            }
+        }
+
         #endregion
 
         #region Private Properties
@@ -98,6 +111,9 @@ namespace OneTimetablePlus.Services
 
             LoadFromFile();
 
+            //TODO: 似乎刚初始化，不能RaisePropertyChange
+            //WeatherForecastLocation = "哈尔滨";
+            //RaisePropertyChanged(() => WeatherForecastLocation);
         }
 
         private void LoadFromFile()

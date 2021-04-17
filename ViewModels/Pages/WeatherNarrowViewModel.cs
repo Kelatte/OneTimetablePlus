@@ -32,6 +32,11 @@ namespace OneTimetablePlus.ViewModels.Pages
                 {
                     RaisePropertyChanged(nameof(ItemViewModels));
                 }
+                else if(e.PropertyName == nameof(weather.CityName))
+                {
+                    RaisePropertyChanged(nameof(LocationText));
+
+                }
             };
         }
 
@@ -50,6 +55,9 @@ namespace OneTimetablePlus.ViewModels.Pages
         public List<WeatherDailyViewModel> ItemViewModels => GetWeatherDailyViewModels();
 
         public RelayCommand BackCommand { get; set; }
+
+        public string LocationText => "地点:" + weather.CityName;
+
         #endregion
 
         #region Private Methods

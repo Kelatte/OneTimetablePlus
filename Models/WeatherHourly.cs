@@ -4,10 +4,11 @@ using System.Text;
 
 namespace OneTimetablePlus.Models
 {
-    public class WeahterHourlyInfo
+    public class WeatherHourlyInfo
     {
         public DateTime FxDate { get; set; }
         public string Temp { get; set; }
-        public string Text { get; set; }
+        public int Precip { get; set; }
+        public int Pop { get; set; }
     }
 }

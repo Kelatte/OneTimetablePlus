@@ -56,22 +56,26 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding ItemViewModels}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel>
-                        <uc:WeatherDaily/>
+        <StackPanel Grid.Row="1">
+            <ItemsControl ItemsSource="{Binding ItemViewModels}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <uc:WeatherDaily/>
 
-                        <Line Margin="7" X1="80" HorizontalAlignment="Center"
+                            <Line Margin="7" X1="80" HorizontalAlignment="Center"
                                       StrokeThickness="2"
                                       Stroke="{StaticResource ForegroundLightBrush}"/>
-                    </StackPanel>
-                    
-                    
-                    
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                        </StackPanel>
+
+
+
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Text="{Binding LocationText}"/>
+        </StackPanel>
+
 
         <Button Grid.Row="3" Content="返回" Command="{Binding BackCommand}" Style="{StaticResource MidButton}"/>
     </Grid>

@@ -14,6 +14,8 @@ namespace OneTimetablePlus.Services
 
         public WeatherDailyInfo WeatherTomorrow { get; }
 
+        public string CityName { get; }
+
         public Task RefreshWeather();
 
         public Task RefreshLocation();

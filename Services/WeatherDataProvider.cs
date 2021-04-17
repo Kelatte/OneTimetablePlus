@@ -7,6 +7,7 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OneTimetablePlus.Models;
+using System.Diagnostics;
 
 namespace OneTimetablePlus.Services
 {
@@ -16,12 +17,37 @@ namespace OneTimetablePlus.Services
         
         public WeatherDataProvider(IDataProvider dataProvider)
         {
-            data = dataProvider;
-
             //初始化city之类的
 #if DEBUG
-            id = "101210205";
+            //模拟在线推断好了地址
+            //city = "长兴";
+            //id = "101210205";
 #endif
+
+            data = dataProvider;
+
+            if (!string.IsNullOrWhiteSpace(data.WeatherForecastLocation))
+            {
+                city = data.WeatherForecastLocation;
+                RaisePropertyChanged(() => CityName);
+            }
+
+            data.PropertyChanged += async (sender, e) =>
+            {
+                if (e.PropertyName == GetPropertyName(() => data.WeatherForecastLocation)
+                && !string.IsNullOrWhiteSpace(data.WeatherForecastLocation))
+                {
+                    city = data.WeatherForecastLocation;
+                    RaisePropertyChanged(() => CityName);
+
+                    Debug.Print($"data.WeatherForecastLocation changed : {data.WeatherForecastLocation}");
+
+                    await RefreshLocation();
+                    await RefreshWeather();
+                }
+            };
+
+
         }
         #endregion
 
@@ -31,7 +57,11 @@ namespace OneTimetablePlus.Services
 
         private readonly IDataProvider data;
 
+        /// <summary>
+        /// 本地存储的默认地址 或 者在线通过ip推断的地址
+        /// </summary>
         private string city;
+
         private string region;
         private string id;
 
@@ -45,12 +75,17 @@ namespace OneTimetablePlus.Services
         public WeatherDailyInfo WeatherTomorrow => weather3d?[1];
         public List<WeatherDailyInfo> Weather7d => weather7d;
 
+        public string CityName => city;
+
         #endregion
 
         #region Public Methods
 
         public async Task RefreshWeather()
         {
+            if (id == null)
+                await RefreshLocation();
+
             //TODO: 暂时全部刷新，后来再分3d和7d刷新
             weather3d = await Get3dWeather();
             weather7d = await Get7dWeather();
@@ -67,7 +102,7 @@ namespace OneTimetablePlus.Services
 
         #region Private Methods
 
-        private async Task RefreshCidyRegion()
+        private async Task RefreshCityRegion()
         {
             HttpClient httpClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(3) };
             string uri = "http://ip-api.com/json/";
@@ -83,12 +118,14 @@ namespace OneTimetablePlus.Services
             }
             city = responseJson?["city"]?.ToString().Replace(" ", "");
             region = responseJson?["regionName"]?.ToString().Replace(" ", "");
+
+            RaisePropertyChanged(nameof(CityName));
         }
 
         private async Task RefreshLocationId()
         {
-            if (city == null || region == null)
-                await RefreshCidyRegion();
+            if (string.IsNullOrWhiteSpace(city) && string.IsNullOrWhiteSpace(region))
+                await RefreshCityRegion();
             HttpClientHandler handler = new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.GZip };
             HttpClient httpClient = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(3) };
             string uri = "https://geoapi.qweather.com/v2/city/lookup?key={2}&location={0}&range=cn&adm={1}";

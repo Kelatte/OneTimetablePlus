@@ -27,6 +27,9 @@
             <StackPanel Orientation="Horizontal">
                 <CheckBox Content="开机自启" IsChecked="{Binding IsAutoStart}" Margin="5" />
                 <CheckBox Content="天气预报" IsChecked="{Binding WeatherForecastEnabled}" Margin="5" />
+                <TextBlock Text="默认地点:" Style="{StaticResource SmallerText}" Margin="1 5"/>
+                <TextBox Text="{Binding WeatherLocation}" Margin="1 5"/>
+                <TextBlock Text="{Binding WeatherCurrentLocation}" Style="{StaticResource SmallerText}" Margin="1 5"/>
             </StackPanel>
         </GroupBox>
         <GroupBox Header="课程设置" Margin="0 10 0 0">
