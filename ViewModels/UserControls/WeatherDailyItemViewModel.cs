@@ -7,11 +7,11 @@ using OneTimetablePlus.Models;
 
 namespace OneTimetablePlus.ViewModels.UserControls
 {
-    public class WeatherDailyViewModel : ViewModelBase
+    public class WeatherDailyItemViewModel : ViewModelBase
     {
         #region Constructor
 
-        public WeatherDailyViewModel(WeatherDailyInfo weatherDailyInfo)
+        public WeatherDailyItemViewModel(WeatherDailyInfo weatherDailyInfo)
         {
             IconDay = weatherDailyInfo.IconDay;
             IconNight = weatherDailyInfo.IconNight;

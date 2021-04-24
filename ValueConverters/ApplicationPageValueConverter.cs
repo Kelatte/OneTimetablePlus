@@ -17,8 +17,11 @@ namespace OneTimetablePlus.ValueConverters
                 case ApplicationPage.DayCoursePresent:
                     return new DayCoursePresentPage();
 
-                case ApplicationPage.WeatherNarrow:
-                    return new WeatherNarrowPage();
+                case ApplicationPage.WeatherDaily:
+                    return new WeatherDailyPage();
+
+                case ApplicationPage.WeatherHourly:
+                    return new WeatherHourlyPage();
 
                 default:
                     Debugger.Break();

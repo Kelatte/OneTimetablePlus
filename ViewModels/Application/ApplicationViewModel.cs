@@ -98,7 +98,7 @@ namespace OneTimetablePlus.ViewModels.Application
         {
             if (page == MainCurrentPage)
                 return;
-
+            
             MainCurrentPage = page;
             RaisePropertyChanged(nameof(MainCurrentPage));
         }

@@ -12,6 +12,8 @@ namespace OneTimetablePlus.Services
 
         public List<WeatherDailyInfo> Weather7d { get; }
 
+        public List<WeatherHourlyInfo> Weather24h { get; }
+
         public WeatherDailyInfo WeatherTomorrow { get; }
 
         public string CityName { get; }

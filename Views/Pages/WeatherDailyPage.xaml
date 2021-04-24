@@ -1,0 +1,47 @@
+﻿<Page x:Class="OneTimetablePlus.Resources.Pages.WeatherDailyPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:OneTimetablePlus.Resources.Pages"
+      xmlns:converters="clr-namespace:OneTimetablePlus.ValueConverters"
+      xmlns:resources="clr-namespace:OneTimetablePlus.Resources"
+      xmlns:uc="clr-namespace:OneTimetablePlus.Views.UserControls"
+      mc:Ignorable="d" 
+      DataContext="{Binding WeatherDaily, Source={StaticResource Locator}}"
+      d:DesignHeight="871.2605042016806" d:DesignWidth="91.49"
+      Title="WeatherDailyPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="1">
+            <ItemsControl ItemsSource="{Binding ItemViewModels}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <uc:WeatherDailyItem/>
+
+                            <Line Margin="7" X1="80" HorizontalAlignment="Center"
+                                      StrokeThickness="2"
+                                      Stroke="{StaticResource ForegroundLightBrush}"/>
+                        </StackPanel>
+
+
+
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Text="{Binding LocationText}"/>
+        </StackPanel>
+
+
+        <Button Grid.Row="3" Content="24小时" Command="{Binding HourlyCommand}" Style="{StaticResource MidButton}"/>
+        <Button Grid.Row="4" Content="返回" Command="{Binding BackCommand}" Style="{StaticResource MidButton}"/>
+    </Grid>
+</Page>

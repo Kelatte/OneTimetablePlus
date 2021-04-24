@@ -6,9 +6,9 @@ namespace OneTimetablePlus.Models
 {
     public class WeatherHourlyInfo
     {
-        public DateTime FxDate { get; set; }
-        public string Temp { get; set; }
-        public int Precip { get; set; }
+        public DateTime FxTime { get; set; }
+        public int Temp { get; set; }
+        public float Precip { get; set; }
         public int Pop { get; set; }
     }
 }

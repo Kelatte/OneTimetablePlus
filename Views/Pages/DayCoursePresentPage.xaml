@@ -48,7 +48,7 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
 
-            <uc:WeatherDaily DataContext="{Binding WeatherViewModel}"/>
+            <uc:WeatherDailyItem DataContext="{Binding WeatherViewModel}"/>
             <!--
             <TextBlock Text="明日天气预报" Style="{StaticResource SmallerText}"/>
             <Grid>

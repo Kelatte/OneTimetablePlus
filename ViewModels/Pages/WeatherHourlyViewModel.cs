@@ -5,23 +5,24 @@ using OneTimetablePlus.ViewModels.Application;
 using OneTimetablePlus.ViewModels.UserControls;
 using OneTimetablePlus.Services;
 using OneTimetablePlus.Models;
-
+using System.Diagnostics;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 
 
 namespace OneTimetablePlus.ViewModels.Pages
 {
-    public class WeatherNarrowViewModel : ViewModelBase
+    public class WeatherHourlyViewModel : ViewModelBase
     {
         #region Constructor
 
-        public WeatherNarrowViewModel(ApplicationViewModel applicationViewModel, IWeatherDataProvider weatherProvider)
+        public WeatherHourlyViewModel(ApplicationViewModel applicationViewModel, IWeatherDataProvider weatherProvider)
         {
             application = applicationViewModel;
             weather = weatherProvider;
 
             BackCommand = new RelayCommand(Back);
+            DailyCommand = new RelayCommand(GotoDaily);
         }
 
         public void InitListener()
@@ -52,43 +53,52 @@ namespace OneTimetablePlus.ViewModels.Pages
 
         #region Public Properties
 
-        public List<WeatherDailyViewModel> ItemViewModels => GetWeatherDailyViewModels();
+        public List<WeatherHourlyItemViewModel> ItemViewModels => GetWeatherHourlyViewModels();
 
         public RelayCommand BackCommand { get; set; }
+
+        public RelayCommand DailyCommand { get; set; }
 
         public string LocationText => "地点:" + weather.CityName;
 
         #endregion
 
         #region Private Methods
-        private List<WeatherDailyViewModel> GetWeatherDailyViewModels()
+
+        private List<WeatherHourlyItemViewModel> GetWeatherHourlyViewModels()
         {
-            List<WeatherDailyViewModel> vms = new List<WeatherDailyViewModel>();
-            foreach (WeatherDailyInfo daily in weather.Weather7d)
+            List<WeatherHourlyItemViewModel> vms = new List<WeatherHourlyItemViewModel>();
+            foreach (WeatherHourlyInfo hourly in weather.Weather24h)
             {
-                vms.Add(new WeatherDailyViewModel(daily));
+                if (hourly.FxTime.Hour >= 23 || hourly.FxTime.Hour <= 6)
+                    continue;
+                vms.Add(new WeatherHourlyItemViewModel(hourly));
             }
             return vms;
         }
 
         private void Back()
         {
+            Console.Write("Back called");
             application.GotoMainPage(ApplicationPage.DayCoursePresent);
         }
-        private List<WeatherDailyViewModel> WeatherDailyDemo()
-        {
-            WeatherDailyInfo dailyInfo = new WeatherDailyInfo
-            {
-                TempMax = 10,
-                TempMin = 5,
-                TextDay = "晴",
-                TextNight = "小雨",
-                IconDay = 100,
-                IconNight = 150,
-            };
-            WeatherDailyViewModel vm = new WeatherDailyViewModel(dailyInfo);
 
-            List<WeatherDailyViewModel> vms = new List<WeatherDailyViewModel>();
+        private void GotoDaily()
+        {
+            Debug.Print("GotoDaily called");
+            application.GotoMainPage(ApplicationPage.WeatherDaily);
+        }
+
+        
+        private List<WeatherHourlyItemViewModel> WeatherHourlyDemo()
+        {
+            WeatherHourlyInfo dailyInfo = new WeatherHourlyInfo
+            {
+                
+            };
+            WeatherHourlyItemViewModel vm = new WeatherHourlyItemViewModel(dailyInfo);
+
+            List<WeatherHourlyItemViewModel> vms = new List<WeatherHourlyItemViewModel>();
             vms.Add(vm);
             vms.Add(vm);
             vms.Add(vm);

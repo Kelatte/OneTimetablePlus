@@ -35,7 +35,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Update="Views\UserControls\WeatherHourly.xaml.cs">
+    <Compile Update="Views\Pages\WeatherHourlyPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UserControls\WeatherHourlyItem.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -48,7 +51,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Views\UserControls\WeatherHourly.xaml">
+    <Page Update="Views\Pages\WeatherHourlyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\WeatherHourlyItem.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
