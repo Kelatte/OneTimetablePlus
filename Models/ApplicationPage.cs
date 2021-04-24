@@ -7,6 +7,6 @@ namespace OneTimetablePlus.Models
     public enum ApplicationPage
     {
         DayCoursePresent = 0,
-        WeatherNarrow = 1,
+        WeatherDaily = 1,
     }
 }

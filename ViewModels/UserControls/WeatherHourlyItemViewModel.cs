@@ -7,11 +7,11 @@ using OneTimetablePlus.Models;
 
 namespace OneTimetablePlus.ViewModels.UserControls
 {
-    public class WeatherHourlyViewModel : ViewModelBase
+    public class WeatherHourlyItemViewModel : ViewModelBase
     {
         #region Constructor
 
-        public WeatherHourlyViewModel(WeatherHourlyInfo info)
+        public WeatherHourlyItemViewModel(WeatherHourlyInfo info)
         {
             RainInfo = $"降水量 {info?.Precip} 降水率 {info?.Pop}";
             TemperatureInfo = $"气温 {info?.Temp}℃";

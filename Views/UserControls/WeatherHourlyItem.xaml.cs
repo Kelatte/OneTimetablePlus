@@ -14,11 +14,11 @@ using System.Windows.Shapes;
 namespace OneTimetablePlus.Views.UserControls
 {
     /// <summary>
-    /// Interaction logic for WeatherDaily.xaml
+    /// Interaction logic for WeatherHourlyItem.xaml
     /// </summary>
-    public partial class WeatherHourly : UserControl
+    public partial class WeatherHourlyItem : UserControl
     {
-        public WeatherHourly()
+        public WeatherHourlyItem()
         {
             InitializeComponent();
         }

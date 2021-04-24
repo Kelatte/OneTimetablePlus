@@ -12,11 +12,11 @@ using GalaSoft.MvvmLight.CommandWpf;
 
 namespace OneTimetablePlus.ViewModels.Pages
 {
-    public class WeatherNarrowViewModel : ViewModelBase
+    public class WeatherDailyViewModel : ViewModelBase
     {
         #region Constructor
 
-        public WeatherNarrowViewModel(ApplicationViewModel applicationViewModel, IWeatherDataProvider weatherProvider)
+        public WeatherDailyViewModel(ApplicationViewModel applicationViewModel, IWeatherDataProvider weatherProvider)
         {
             application = applicationViewModel;
             weather = weatherProvider;
@@ -52,7 +52,7 @@ namespace OneTimetablePlus.ViewModels.Pages
 
         #region Public Properties
 
-        public List<WeatherDailyViewModel> ItemViewModels => GetWeatherDailyViewModels();
+        public List<WeatherDailyItemViewModel> ItemViewModels => GetWeatherDailyViewModels();
 
         public RelayCommand BackCommand { get; set; }
 
@@ -61,12 +61,12 @@ namespace OneTimetablePlus.ViewModels.Pages
         #endregion
 
         #region Private Methods
-        private List<WeatherDailyViewModel> GetWeatherDailyViewModels()
+        private List<WeatherDailyItemViewModel> GetWeatherDailyViewModels()
         {
-            List<WeatherDailyViewModel> vms = new List<WeatherDailyViewModel>();
+            List<WeatherDailyItemViewModel> vms = new List<WeatherDailyItemViewModel>();
             foreach (WeatherDailyInfo daily in weather.Weather7d)
             {
-                vms.Add(new WeatherDailyViewModel(daily));
+                vms.Add(new WeatherDailyItemViewModel(daily));
             }
             return vms;
         }
@@ -75,7 +75,7 @@ namespace OneTimetablePlus.ViewModels.Pages
         {
             application.GotoMainPage(ApplicationPage.DayCoursePresent);
         }
-        private List<WeatherDailyViewModel> WeatherDailyDemo()
+        private List<WeatherDailyItemViewModel> WeatherDailyDemo()
         {
             WeatherDailyInfo dailyInfo = new WeatherDailyInfo
             {
@@ -86,9 +86,9 @@ namespace OneTimetablePlus.ViewModels.Pages
                 IconDay = 100,
                 IconNight = 150,
             };
-            WeatherDailyViewModel vm = new WeatherDailyViewModel(dailyInfo);
+            WeatherDailyItemViewModel vm = new WeatherDailyItemViewModel(dailyInfo);
 
-            List<WeatherDailyViewModel> vms = new List<WeatherDailyViewModel>();
+            List<WeatherDailyItemViewModel> vms = new List<WeatherDailyItemViewModel>();
             vms.Add(vm);
             vms.Add(vm);
             vms.Add(vm);

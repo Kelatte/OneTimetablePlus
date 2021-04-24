@@ -121,13 +121,13 @@ namespace OneTimetablePlus.ViewModels.Pages
 
         public string ShortTime => DateTime.Now.ToString("HH:mm");
 
-        public WeatherDailyViewModel WeatherViewModel
+        public WeatherDailyItemViewModel WeatherViewModel
         {
             get
             {
                 if (weather.WeatherTomorrow != null)
                 {
-                    return new WeatherDailyViewModel(weather.WeatherTomorrow);
+                    return new WeatherDailyItemViewModel(weather.WeatherTomorrow);
                 }
                 else
                 {
@@ -148,7 +148,7 @@ namespace OneTimetablePlus.ViewModels.Pages
         private void GoToWeatherPage()
         {
             //Debug.Print("GoToWeatherPage Called");
-            application.GotoMainPage(ApplicationPage.WeatherNarrow);
+            application.GotoMainPage(ApplicationPage.WeatherDaily);
         }
         #endregion
     }

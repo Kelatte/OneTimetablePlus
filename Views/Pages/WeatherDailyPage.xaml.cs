@@ -14,11 +14,11 @@ using System.Windows.Shapes;
 namespace OneTimetablePlus.Resources.Pages
 {
     /// <summary>
-    /// Interaction logic for WeatherNarrowPage.xaml
+    /// Interaction logic for WeatherDailyPage.xaml
     /// </summary>
-    public partial class WeatherNarrowPage : Page
+    public partial class WeatherDailyPage : Page
     {
-        public WeatherNarrowPage()
+        public WeatherDailyPage()
         {
             InitializeComponent();
         }

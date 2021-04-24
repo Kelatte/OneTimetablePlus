@@ -39,7 +39,7 @@ namespace OneTimetablePlus.ViewModels.Application
             SimpleIoc.Default.Register<EditViewModel>();
             SimpleIoc.Default.Register<TaskbarIconViewModel>();
             SimpleIoc.Default.Register<DayCoursePresentViewModel>();
-            SimpleIoc.Default.Register<WeatherNarrowViewModel>();
+            SimpleIoc.Default.Register<WeatherDailyViewModel>();
         }
 
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
@@ -50,7 +50,7 @@ namespace OneTimetablePlus.ViewModels.Application
 
         public DayCoursePresentViewModel DayCoursePresent => ServiceLocator.Current.GetInstance<DayCoursePresentViewModel>();
 
-        public WeatherNarrowViewModel Weather => ServiceLocator.Current.GetInstance<WeatherNarrowViewModel>();
+        public WeatherDailyViewModel Weather => ServiceLocator.Current.GetInstance<WeatherDailyViewModel>();
 
         public static void Cleanup()
         {
