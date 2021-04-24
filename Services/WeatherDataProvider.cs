@@ -14,7 +14,7 @@ namespace OneTimetablePlus.Services
     class WeatherDataProvider : ObservableObject, IWeatherDataProvider
     {
         #region Constructers
-        
+
         public WeatherDataProvider(IDataProvider dataProvider)
         {
             //初始化city之类的
@@ -67,14 +67,15 @@ namespace OneTimetablePlus.Services
 
         private List<WeatherDailyInfo> weather3d;
         private List<WeatherDailyInfo> weather7d;
+        private List<WeatherHourlyInfo> weather24h;
 
         #endregion
 
         #region Public Properties
 
-        public WeatherDailyInfo WeatherTomorrow => weather3d?[1];
+        public WeatherDailyInfo WeatherTomorrow => weather7d?[1];
         public List<WeatherDailyInfo> Weather7d => weather7d;
-
+        public List<WeatherHourlyInfo> Weather24h => weather24h;
         public string CityName => city;
 
         #endregion
@@ -87,11 +88,13 @@ namespace OneTimetablePlus.Services
                 await RefreshLocation();
 
             //TODO: 暂时全部刷新，后来再分3d和7d刷新
-            weather3d = await Get3dWeather();
+            //weather3d = await Get3dWeather();
             weather7d = await Get7dWeather();
+            weather24h = await GetHoursWeather();
 
             RaisePropertyChanged(() => WeatherTomorrow);
             RaisePropertyChanged(() => Weather7d);
+            RaisePropertyChanged(() => Weather24h);
         }
 
         public async Task RefreshLocation()
@@ -191,6 +194,50 @@ namespace OneTimetablePlus.Services
 
 
         }
+
+        private async Task<List<WeatherHourlyInfo>> GetHoursWeather()
+        {
+            if (id == null)
+                await RefreshLocationId();
+            string uri = "https://devapi.qweather.com/v7/weather/24h?location={0}&key={1}";
+            uri = string.Format(uri, id, Key);
+
+            HttpClientHandler handler = new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.GZip };
+            HttpClient httpClient = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(3) };
+            HttpResponseMessage response = await httpClient.GetAsync(uri);
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+            JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
+            int code = (int)responseJson?["code"];
+            if (code != 200)
+            {
+                Exception e = new Exception($"天气预报获取错误 \r\n uri = {uri} \r\n code = {code}");
+                throw e;
+            }
+
+            JArray hours = responseJson?["hourly"] as JArray;
+            List<WeatherHourlyInfo> result = new List<WeatherHourlyInfo>();
+            if (hours == null)
+            {
+                Exception e = new Exception("天气预报获取错误 \r\n uri = {uri} \r\n " + nameof(hours) + " == null");
+                throw e;
+            }
+            foreach (JToken hour in hours)
+            {
+                WeatherHourlyInfo info = new WeatherHourlyInfo
+                {
+                    Temp = (int)hour["temp"],
+                    Precip = (float)hour["precip"],
+                    Pop = (int)hour["pop"],
+                    FxTime = (DateTime)hour["fxTime"],
+                };
+                result.Add(info);
+            }
+
+            return result;
+
+        }
+
 
         private async Task<List<WeatherDailyInfo>> Get3dWeather()
         {

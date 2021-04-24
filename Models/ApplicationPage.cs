@@ -8,5 +8,6 @@ namespace OneTimetablePlus.Models
     {
         DayCoursePresent = 0,
         WeatherDaily = 1,
+        WeatherHourly = 2,
     }
 }

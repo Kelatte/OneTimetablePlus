@@ -10,7 +10,6 @@
              d:DesignHeight="100" d:DesignWidth="91.49">
     <StackPanel>
         <TextBlock Text="{Binding Title}" Style="{StaticResource SmallerText}"/>
-        <TextBlock Text="{Binding RainInfo}" Style="{StaticResource SmallerText}"/>
-        <TextBlock Text="{Binding TemperatureInfo}" Style="{StaticResource SmallerText}"/>
+       
     </StackPanel>
 </UserControl>

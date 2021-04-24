@@ -13,9 +13,13 @@ namespace OneTimetablePlus.ViewModels.UserControls
 
         public WeatherHourlyItemViewModel(WeatherHourlyInfo info)
         {
-            RainInfo = $"降水量 {info?.Precip} 降水率 {info?.Pop}";
-            TemperatureInfo = $"气温 {info?.Temp}℃";
-            Title = info?.FxDate.Hour.ToString() + " 时天气预报";
+            //RainInfo = $"降水 {info?.Precip}mm 率 {info?.Pop}";
+            //TemperatureInfo = $"气温 {info?.Temp}℃";
+            Title = $"{info?.FxTime.Hour}时 气温 {info?.Temp}℃";
+            if (info?.Precip != 0 || info?.Pop !=0)
+            {
+                Title += $"\r\n降水 {info?.Precip} 率 {info?.Pop}";
+            }
         }
 
         #endregion

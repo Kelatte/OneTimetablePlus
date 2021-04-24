@@ -95,7 +95,7 @@ namespace OneTimetablePlus.ViewModels.Pages
             }
             catch (Exception e)
             {
-                MessageBox.Show("请检查您的网络是否通畅\r\n" + e.Message, "网络错误");
+                MessageBox.Show("请检查您的网络是否通畅\r\n" + e.Message, "刷新天气错误");
             }
 
 

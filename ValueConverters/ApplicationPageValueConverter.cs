@@ -20,6 +20,9 @@ namespace OneTimetablePlus.ValueConverters
                 case ApplicationPage.WeatherDaily:
                     return new WeatherDailyPage();
 
+                case ApplicationPage.WeatherHourly:
+                    return new WeatherHourlyPage();
+
                 default:
                     Debugger.Break();
                     return null;
