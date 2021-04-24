@@ -17,10 +17,12 @@ namespace OneTimetablePlus.ViewModels.UserControls
             IconNight = weatherDailyInfo.IconNight;
             TemperatureInfo = $"气温 {weatherDailyInfo?.TempMin} ~ {weatherDailyInfo?.TempMax}℃";
 
-            var weeks = new string[] { "周日", "周一", "周二", "周三", "周四", "周五", "周六"};
+            int culturalWeek = ((int)DateTime.Today.DayOfWeek - 1 + 7) % 7;
+            //使 thisWeekEnd 所指日期在 我国的 本周日
+            DateTime thisWeekEnd = DateTime.Today.AddDays(6 - culturalWeek);
+
+            var weeks = new string[] { "周日", "周一", "周二", "周三", "周四", "周五", "周六" };
             string dayOfWeek = weeks[(int)weatherDailyInfo.FxDate.DayOfWeek];
-            //使 thisWeekEnd 所指日期在周日
-            DateTime thisWeekEnd = DateTime.Today.AddDays(7 - (int)DateTime.Now.DayOfWeek);
             if (weatherDailyInfo.FxDate > thisWeekEnd)
                 dayOfWeek = "下" + dayOfWeek;
             Title = dayOfWeek + "天气预报";
