@@ -110,7 +110,7 @@ namespace OneTimetablePlus.Services
         {
             get
             {
-                string dayName = StringFormat.ToDayName(SelectedDayCourse.DayName);
+                string dayName = StringFormat.DayNameToDayNamePure(SelectedDayCourse.DayName);
                 return StringFormat.DayNameToDayId(dayName);
             }
         }
@@ -152,10 +152,12 @@ namespace OneTimetablePlus.Services
                     string json = File.ReadAllText(dataPath);
                     WholeData = JsonConvert.DeserializeObject<WholeData>(json);
                     InitWholeData();
+
                 }
                 else
                 {
                     DefaultWholeData();
+                    InitWholeData();
                 }
             }
             catch (Exception e)
@@ -170,8 +172,13 @@ namespace OneTimetablePlus.Services
         /// </summary>
         private void InitWholeData()
         {
-            WholeData.ColorConfig = WholeData.ColorConfig ?? new ColorConfig();
-            WholeData.ColorConfig.ColorSamples = WholeData.ColorConfig.ColorSamples ?? new List<ColorSampleConfig>();
+            WholeData ??= new WholeData();
+            WholeData.DataDescription ??= new DataDescription();
+            WholeData.CourseSpecies ??= new List<Course>();
+            WholeData.WeekCourses ??= new List<WeekCourse>();
+            WholeData.ColorConfig ??=  new ColorConfig();
+            WholeData.ColorConfig.ColorSamples ??=  new List<ColorSampleConfig>();
+            
         }
 
         /// <summary>
@@ -179,16 +186,6 @@ namespace OneTimetablePlus.Services
         /// </summary>
         private void DefaultWholeData()
         {
-            WholeData = new WholeData
-            {
-                DataDescription = new DataDescription(),
-                CourseSpecies = new List<Course>(),
-                WeekCourses = new List<WeekCourse>(),
-                ColorConfig = new ColorConfig() { ColorSamples = new List<ColorSampleConfig>()},
-                
-                SelectedWeekId = 0,
-                WeatherForecastEnabled = false,
-            };
             AddWeek("默认周表");
             AddCourseSpecies("全名", "简");
 
@@ -252,15 +249,15 @@ namespace OneTimetablePlus.Services
         {
 
             // dayName 为 纯Monday之类的
-            string dayName = StringFormat.ToDayName(SelectedDayCourse.DayName);
+            string dayName = StringFormat.DayNameToDayNamePure(SelectedDayCourse.DayName);
 
             SelectedWeek.CirculatingCourses ??= new List<CirculatingDayCourse>();
 
             //寻找该日的循环表
             CirculatingDayCourse target = SelectedWeek.CirculatingCourses
-                .FirstOrDefault(t => t.DayName == dayName);
+                .SingleOrDefault(t => t.DayName == dayName);
 
-            if (target == null)
+            if (target == default(CirculatingDayCourse))
             {
                 //生成一个循环表
                 // 计算 本日或下一个到达选中的周几 日期
@@ -283,7 +280,7 @@ namespace OneTimetablePlus.Services
 
             DayCourse add = new DayCourse
             {
-                DayName = dayName + ":" + (target.DayCourses.Count + 1),
+                DayName = dayName + ":" + (char)(65 + target.DayCourses.Count),
                 Courses = new List<Course>(),
             };
 
@@ -308,15 +305,21 @@ namespace OneTimetablePlus.Services
 
         public void DeleteCirculatingDay()
         {
-            string dayName = StringFormat.ToDayName(SelectedDayCourse.DayName);
+            string dayNamePure = StringFormat.DayNameToDayNamePure(SelectedDayCourse.DayName);
             CirculatingDayCourse circulating = SelectedWeek.CirculatingCourses
-                .First(x => x.DayName == dayName);
-            DayCourse removeDay = circulating.DayCourses.First(x => x.DayName == SelectedDayCourse.DayName);
-            circulating.DayCourses.Remove(removeDay);
+                .Single(x => x.DayName == dayNamePure);
 
+            int begin = circulating.DayCourses.FindIndex(x => x.DayName == SelectedDayCourse.DayName);
+            circulating.DayCourses.RemoveAt(begin);
+            for (int i = begin; i< circulating.DayCourses.Count; i++)
+            {
+                var name = circulating.DayCourses[i].DayName;
+                circulating.DayCourses[i].DayName = StringFormat.DayNameToDayNamePure(name)
+                    + ":" + (char)(65 + StringFormat.DayNameToIndex(name) - 1);
+            }
 
             RaisePropertyChanged(() => AllDayCourses);
-            DayCourse selectDay = SelectedWeek.DayCourses.First(x => x.DayName == dayName);
+            DayCourse selectDay = SelectedWeek.DayCourses.Single(x => x.DayName == dayNamePure);
             SelectedDayCourse = selectDay;
 
             if (SelectedDayOfWeek == (int)DateTime.Today.DayOfWeek)
@@ -395,7 +398,8 @@ namespace OneTimetablePlus.Services
             WeekCourse weekCourse = new WeekCourse
             {
                 WeekName = addName,
-                DayCourses = new List<DayCourse>()
+                DayCourses = new List<DayCourse>(),
+                CirculatingCourses = new List<CirculatingDayCourse>(),
             };
 
             foreach (DayOfWeek dayOfWeek in Enum.GetValues(typeof(DayOfWeek)))
@@ -403,7 +407,7 @@ namespace OneTimetablePlus.Services
                 weekCourse.DayCourses.Add(new DayCourse
                 {
                     DayName = dayOfWeek.ToString(),
-                    Courses = new List<Course>()
+                    Courses = new List<Course>(),
                 });
             }
 

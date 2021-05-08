@@ -17,7 +17,7 @@ namespace OneTimetablePlus.Models
         /// <summary>
         /// 当日名称
         /// <para>做单独日课表时 为 Monday</para>
-        /// <para>做循环课表时 为 Monday:1</para>
+        /// <para>做循环课表时 为 Monday:A</para>
         /// </summary>
         public string DayName { get; set; }
 
