@@ -10,6 +10,16 @@ namespace OneTimetablePlus.Services
 {
     public interface IDataProvider
     {
+        List<string> ColorNames { get; }
+
+        string SelectedColor { get; }
+
+        void ChangeSelectedColor(string name);
+
+        void DeleteColor(string name);
+
+        void AddColor(ColorSampleConfig config);
+
         event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>

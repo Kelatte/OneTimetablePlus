@@ -6,6 +6,7 @@ using GalaSoft.MvvmLight.Ioc;
 using OneTimetablePlus.Services;
 using OneTimetablePlus.ViewModels.Pages;
 using OneTimetablePlus.ViewModels.Windows;
+using OneTimetablePlus.Helper;
 
 namespace OneTimetablePlus.ViewModels.Application
 {
@@ -41,6 +42,7 @@ namespace OneTimetablePlus.ViewModels.Application
             SimpleIoc.Default.Register<DayCoursePresentViewModel>();
             SimpleIoc.Default.Register<WeatherDailyViewModel>();
             SimpleIoc.Default.Register<WeatherHourlyViewModel>();
+            SimpleIoc.Default.Register<ColorChange>();
         }
 
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
@@ -55,9 +57,11 @@ namespace OneTimetablePlus.ViewModels.Application
 
         public WeatherHourlyViewModel WeatherHourly => ServiceLocator.Current.GetInstance<WeatherHourlyViewModel>();
 
+        public ColorChange ColorChange => ServiceLocator.Current.GetInstance<ColorChange>();
+
         public static void Cleanup()
         {
-            // TODO ViewModelLocator Clear the ViewModels
+           
         }
     }
 }

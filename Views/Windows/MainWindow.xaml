@@ -4,7 +4,7 @@
         xmlns:converters="clr-namespace:OneTimetablePlus.ValueConverters"
         xmlns:resources="clr-namespace:OneTimetablePlus.Resources"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
-        Background="{StaticResource BackgroundVeryLightBrush}"
+        Background="{DynamicResource BackgroundVeryLightBrush}"
         WindowStyle="None"
         ResizeMode="NoResize"
         ShowInTaskbar="False"
@@ -35,12 +35,12 @@
 
                                 ~1~ Grid 中的角和边缘，不透明蒙版 @1@
                                 <Border x:Name="Container"
-                                        Background="{StaticResource BackgroundLightBrush}"
+                                        Background="{DynamicResource BackgroundLightBrush}"
                                         CornerRadius="10"/>
 
                                 ~1~ 窗体边界和阴影 @1@
                                 <Border CornerRadius="10"
-                                        Background="{StaticResource BackgroundLightBrush}">
+                                        Background="{RelativeResource BackgroundLightBrush}">
                                     <Border.Effect>
                                         <DropShadowEffect ShadowDepth="0" Opacity=".5"/>
                                     </Border.Effect>

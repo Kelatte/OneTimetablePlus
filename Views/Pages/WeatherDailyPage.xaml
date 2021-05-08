@@ -29,7 +29,7 @@
 
                             <Line Margin="7" X1="80" HorizontalAlignment="Center"
                                       StrokeThickness="2"
-                                      Stroke="{StaticResource ForegroundLightBrush}"/>
+                                      Stroke="{DynamicResource ForegroundLightBrush}"/>
                         </StackPanel>
 
 

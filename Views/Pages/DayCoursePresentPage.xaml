@@ -32,7 +32,7 @@
                         <StackPanel>
                             <Line X1="80" HorizontalAlignment="Center"
                                       StrokeThickness="2"
-                                      Stroke="{StaticResource ForegroundLightBrush}"/>
+                                      Stroke="{DynamicResource ForegroundLightBrush}"/>
                             <TextBlock Text="{Binding ShowName}" Style="{StaticResource LargerText}" />
                         </StackPanel>
                     </DataTemplate>
@@ -73,7 +73,7 @@
 
                 <Line Grid.Column="1" Y1="35" VerticalAlignment="Center" HorizontalAlignment="Center"
                       StrokeThickness="1.5"
-                      Stroke="{StaticResource ForegroundLightBrush}"/>
+                      Stroke="{DynamicResource ForegroundLightBrush}"/>
             </Grid>
             <TextBlock Text="{Binding TemperatureInfo}" Style="{StaticResource SmallerText}"/>            
             

@@ -9,16 +9,17 @@
         <ResourceDictionary>
 
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/ColorSamples/Blue.xaml"/>
+                <ResourceDictionary Source="Styles/Brushs.xaml"/>
+                <!--above order is important-->
                 <ResourceDictionary>
                     <vm:ViewModelLocator x:Key="Locator" xmlns:vm="clr-namespace:OneTimetablePlus.ViewModels.Application"/>
                 </ResourceDictionary>
-                <ResourceDictionary Source="Styles/Colors.xaml"/>
                 <ResourceDictionary Source="Styles/Fonts.xaml"/>
                 <ResourceDictionary Source="Styles/Texts.xaml"/>
                 <ResourceDictionary Source="Styles/Buttons.xaml"/>
                 <ResourceDictionary Source="Resources/TaskbarIcon.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-
 
         </ResourceDictionary>
 

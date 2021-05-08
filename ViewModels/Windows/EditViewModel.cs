@@ -28,6 +28,7 @@ namespace OneTimetablePlus.ViewModels.Windows
         private readonly ApplicationViewModel applicationViewModel;
 
         private readonly IWeatherDataProvider weather;
+
         #endregion
 
         #region Public Commmands
@@ -96,6 +97,14 @@ namespace OneTimetablePlus.ViewModels.Windows
 
         #region Public Properties
 
+        //TODO: effect 抗锯齿
+        public string SelectedColor
+        {
+            get => data.SelectedColor;
+            set => data.ChangeSelectedColor(value);
+        }
+
+        public List<string> ColorNames => data.ColorNames;
 
         public string WeatherCurrentLocation => weather.CityName;
 
@@ -214,6 +223,14 @@ namespace OneTimetablePlus.ViewModels.Windows
                 {
                     RaisePropertyChanged(() => WeatherLocation);
                 }
+                else if (e.PropertyName == GetPropertyName(() => data.SelectedColor))
+                {
+                    RaisePropertyChanged(() => SelectedColor);
+                }
+                else if (e.PropertyName == GetPropertyName(() => data.ColorNames))
+                {
+                    RaisePropertyChanged(() => ColorNames);
+                }
             };
 
             weather.PropertyChanged += (sender, e) =>
@@ -254,7 +271,7 @@ namespace OneTimetablePlus.ViewModels.Windows
         private void Closing()
         {
             Debug.Print("EditWindow Closing Command");
-            
+
             if (data.IsUnsaved)
             {
                 MessageBoxResult result = MessageBox.Show(

@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:OneTimetablePlus.Styles">
+    
+    <SolidColorBrush x:Key="BackgroundVeryLightBrush" Color="{StaticResource Color1}"/>
+
+    <SolidColorBrush x:Key="BackgroundLightBrush" Color="{StaticResource Color2}"/>
+
+    <SolidColorBrush x:Key="ForegroundLightBrush" Color="{StaticResource Color3}"/>
+
+    <SolidColorBrush x:Key="ForegroundMainBrush" Color="{StaticResource Color4}"/>
+
+    <SolidColorBrush x:Key="ForegroundDarkBrush" Color="{StaticResource Color5}"/>
+</ResourceDictionary>

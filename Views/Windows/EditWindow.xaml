@@ -3,11 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:OneTimetablePlus.Views"
+        xmlns:local="clr-namespace:OneTimetablePlus.Views.Windows"
         xmlns:models="clr-namespace:OneTimetablePlus.Models"
         xmlns:resources="clr-namespace:OneTimetablePlus.Resources"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:cmd="http://www.galasoft.ch/mvvmlight"
+        xmlns:converters="clr-namespace:OneTimetablePlus.ValueConverters"
         mc:Ignorable="d"
         Title="EditWindow" Height="Auto" Width="Auto"
         SizeToContent="WidthAndHeight"
@@ -31,6 +32,63 @@
                 <TextBox Text="{Binding WeatherLocation}" Margin="1 5"/>
                 <TextBlock Text="{Binding WeatherCurrentLocation}" Style="{StaticResource SmallerText}" Margin="1 5"/>
             </StackPanel>
+        </GroupBox>
+        <GroupBox Header="换肤">
+            <StackPanel>
+                <ListBox ItemsSource="{Binding ColorNames}" SelectedItem="{Binding SelectedColor}" >
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                        <RadioButton Content="{TemplateBinding Content}" Margin="3"
+                                     IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=IsSelected}"/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+                
+            </StackPanel>
+
+            <!--
+            <ItemsControl ItemsSource="{Binding ColorNames}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        
+                        <RadioButton Content="{Binding}" 
+                                     IsChecked="{Binding SelectedColor, ConverterParameter={Binding},
+                                     Converter={converters:ColorSelectedConverter}}"
+                                     Margin="5 1"/>
+                        
+                        {Binding Path=DataContext.DeleteCourseSpeciesCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Window}}
+                        
+                        <RadioButton Content="{Binding Path=.}" 
+                                     Margin="5 1">
+                            <RadioButton.IsChecked>
+                                <MultiBinding Converter="{converters:ColorSelectedConverter}">
+                                    <Binding Path="." Mode="OneWay"/>
+                                    <Binding Path="DataContext.SelectedColor" Mode="TwoWay"  RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Window}"/>
+                                </MultiBinding>
+                            </RadioButton.IsChecked>
+                        </RadioButton>
+                        
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            -->
+
         </GroupBox>
         <GroupBox Header="课程设置" Margin="0 10 0 0">
             <DockPanel>

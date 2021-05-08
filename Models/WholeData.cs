@@ -42,6 +42,11 @@ namespace OneTimetablePlus.Models
         public string WeatherForecastLocation { get; set; }
 
         // TODO: 整合三个天气的配置进一个新的类
+
+        /// <summary>
+        /// 有关颜色的配置
+        /// </summary>
+        public ColorConfig ColorConfig { get; set; }
     }
 
     public class DataDescription

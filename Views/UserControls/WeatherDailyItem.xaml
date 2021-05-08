@@ -17,24 +17,41 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.Resources>
-                <Style TargetType="{x:Type Image}">
+                <!--
+                在此处统一设置style，并且使用dynamicResource会报错
+                猜想：style初始化比较早，所以初始化的时候Dynamic是空白的。resource初始化都是在代码之前运行的
+                -->
+                <!--
+                <Style x:Key="Image1" TargetType="{x:Type Image}">
                     <Setter Property="Effect">
                         <Setter.Value>
-                            <resources:ChangeColorEffect/>
+                            <resources:ChangeColorEffect TargetColor="{DynamicResource Color5}" />
                         </Setter.Value>
                     </Setter>
                 </Style>
+                -->
             </Grid.Resources>
 
             <Image Grid.Column="0" Source="{Binding IconDay, Converter={converters:IconIdToImageConverter}}"
-                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   RenderOptions.BitmapScalingMode="NearestNeighbor">
+                <Image.Effect>
+                    <resources:ChangeColorEffect TargetColor="{DynamicResource Color5}" />
+                </Image.Effect>
+            </Image>
+
 
             <Image Grid.Column="2" Source="{Binding IconNight, Converter={converters:IconIdToImageConverter}}"
-                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   RenderOptions.BitmapScalingMode="NearestNeighbor">
+                <Image.Effect>
+                    <resources:ChangeColorEffect TargetColor="{DynamicResource Color5}" />
+                </Image.Effect>
+            </Image>
 
             <Line Grid.Column="1" Y1="35" VerticalAlignment="Center" HorizontalAlignment="Center"
                       StrokeThickness="1.5"
-                      Stroke="{StaticResource ForegroundLightBrush}"/>
+                      Stroke="{DynamicResource ForegroundLightBrush}"/>
         </Grid>
         <TextBlock Text="{Binding TemperatureInfo}" Style="{StaticResource SmallerText}"/>
     </StackPanel>

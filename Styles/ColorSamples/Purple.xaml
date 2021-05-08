@@ -1,0 +1,27 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:OneTimetablePlus.Styles">
+
+    <Color x:Key="Color1">#E2C6F7</Color>
+
+    <Color x:Key="Color2">#C38AEF</Color>
+
+    <Color x:Key="Color3">#AF5EED</Color>
+
+    <Color x:Key="Color4">#9E36EE</Color>
+
+    <Color x:Key="Color5">#8E0DF1</Color>
+
+    <!--
+    <SolidColorBrush x:Key="BackgroundVeryLightBrush" Color="#FFE5E7"/>
+
+    <SolidColorBrush x:Key="BackgroundLightBrush" Color="#FED3D6"/>
+
+    <SolidColorBrush x:Key="ForegroundLightBrush" Color="#FED3D6"/>
+
+    <SolidColorBrush x:Key="ForegroundMainBrush" Color="#FDACB1"/>
+
+    <SolidColorBrush x:Key="ForegroundDarkBrush" Color="#FC989F"/>
+    -->
+
+</ResourceDictionary>

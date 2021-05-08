@@ -9,12 +9,15 @@ using System.IO;
 using OneTimetablePlus.Models;
 using GalaSoft.MvvmLight;
 using OneTimetablePlus.Helper;
+using System.Windows.Media;
 
 namespace OneTimetablePlus.Services
 {
     public class JsonDataProvider : ObservableObject, IDataProvider
     {
         #region Private Members
+
+        private ColorChange colorChange;
 
         /// <summary>
         /// JSON文件的完整路径
@@ -79,6 +82,23 @@ namespace OneTimetablePlus.Services
             }
         }
 
+        public List<string> ColorNames
+        {
+            get
+            {
+                var defaultName = Enum.GetNames(typeof(ColorSample));
+
+                var colorSamples = WholeData.ColorConfig?.ColorSamples;
+                if (colorSamples == null)
+                    return defaultName.ToList();
+                var customed = from x in colorSamples select x.Name;
+                return customed.Concat(defaultName).ToList();
+            }
+        }
+
+        public string SelectedColor => (WholeData.ColorConfig?.SelectedColor) ?? DefaultColorName;
+
+        //TODO: method addColor & deleteColor & changeSelectedColor
         #endregion
 
         #region Private Properties
@@ -101,13 +121,16 @@ namespace OneTimetablePlus.Services
 
         public const string FileName = "data.json";
 
+        public const string DefaultColorName = "Blue";
         #endregion
 
         #region Constructor
 
-        public JsonDataProvider()
+        public JsonDataProvider(ColorChange colorChange)
         {
             dataPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory ?? "", FileName);
+
+            this.colorChange = colorChange;
 
             LoadFromFile();
 
@@ -116,6 +139,9 @@ namespace OneTimetablePlus.Services
             //RaisePropertyChanged(() => WeatherForecastLocation);
         }
 
+        /// <summary>
+        /// 从文件加载
+        /// </summary>
         private void LoadFromFile()
         {
             //读取数据
@@ -125,11 +151,11 @@ namespace OneTimetablePlus.Services
                 {
                     string json = File.ReadAllText(dataPath);
                     WholeData = JsonConvert.DeserializeObject<WholeData>(json);
-
+                    InitWholeData();
                 }
                 else
                 {
-                    InitWholeData();
+                    DefaultWholeData();
                 }
             }
             catch (Exception e)
@@ -139,13 +165,27 @@ namespace OneTimetablePlus.Services
             }
         }
 
+        /// <summary>
+        /// 初始化<see cref="WholeData"/>
+        /// </summary>
         private void InitWholeData()
+        {
+            WholeData.ColorConfig = WholeData.ColorConfig ?? new ColorConfig();
+            WholeData.ColorConfig.ColorSamples = WholeData.ColorConfig.ColorSamples ?? new List<ColorSampleConfig>();
+        }
+
+        /// <summary>
+        /// <see cref="WholeData"/>的默认配置
+        /// </summary>
+        private void DefaultWholeData()
         {
             WholeData = new WholeData
             {
                 DataDescription = new DataDescription(),
                 CourseSpecies = new List<Course>(),
                 WeekCourses = new List<WeekCourse>(),
+                ColorConfig = new ColorConfig() { ColorSamples = new List<ColorSampleConfig>()},
+                
                 SelectedWeekId = 0,
                 WeatherForecastEnabled = false,
             };
@@ -156,6 +196,45 @@ namespace OneTimetablePlus.Services
         #endregion
 
         #region Public Methods
+
+        public void ChangeSelectedColor(string name)
+        {
+            ColorSampleConfig config = WholeData.ColorConfig?.ColorSamples?.SingleOrDefault((x) => x.Name == name);
+            if (config != default(ColorSampleConfig))
+            {
+                colorChange.FromCustomedSample(config);
+            }
+            else if(Enum.TryParse(name, out ColorSample sample))
+            {
+                colorChange.FromDefaultSample(sample);
+            }
+            else
+            {
+                return;
+            }
+
+            WholeData.ColorConfig.SelectedColor = name;
+            RaisePropertyChanged(nameof(SelectedColor));
+        }
+
+        public void DeleteColor(string name)
+        {
+            ColorSampleConfig config = WholeData.ColorConfig.ColorSamples.First((x) => x.Name == name);
+            WholeData.ColorConfig.ColorSamples.Remove(config);
+
+            if(SelectedColor == name)
+            {
+                ChangeSelectedColor(DefaultColorName);
+            }
+            RaisePropertyChanged(nameof(ColorNames));
+        }
+
+        public void AddColor(ColorSampleConfig config)
+        {
+            WholeData.ColorConfig.ColorSamples.Add(config);
+
+            RaisePropertyChanged(nameof(ColorNames));
+        }
 
         public void ChangeSelectedWeek(WeekCourse selectedWeek)
         {

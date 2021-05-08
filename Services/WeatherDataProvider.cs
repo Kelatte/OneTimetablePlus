@@ -87,7 +87,6 @@ namespace OneTimetablePlus.Services
             if (id == null)
                 await RefreshLocation();
 
-            //TODO: 暂时全部刷新，后来再分3d和7d刷新
             //weather3d = await Get3dWeather();
             weather7d = await Get7dWeather();
             weather24h = await GetHoursWeather();

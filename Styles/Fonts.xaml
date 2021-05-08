@@ -8,12 +8,12 @@
     <!--<Setter Property="FontFamily" Value="Microsoft Yahei"/>-->
     <Style TargetType="{x:Type Control}" x:Key="BaseStyle">
         <Setter Property="FontFamily" Value="Microsoft Yahei"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundDarkBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundDarkBrush}"/>
     </Style>
     
     <Style TargetType="{x:Type TextBlock}" x:Key="BaseTextBlockStyle">
         <Setter Property="FontFamily" Value="Microsoft Yahei"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundDarkBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundDarkBrush}"/>
     </Style>
 
 <Style TargetType="{x:Type Button}" BasedOn="{StaticResource BaseStyle}"/>
