@@ -48,7 +48,12 @@ namespace OneTimetablePlus.Services
         }
 
         //此处直接在属性的set事件中进行RaisePropertyChanged，因为View中可以对该属性直接修改而不经过Mothod。但也因此不可以在Method中多次修改
-        public DayCourse SelectedDayCourse { get => selectedDayCourse; set => Set(ref selectedDayCourse, value); }
+        //TODO 仅在带有星号的课表上新家课程出现 SelectedDayCourse = null 错误。尝试在Model中都写入星号数据，只是在存入文件的时候不写入。或者存入文件的时候也写入，抛弃CirId和Date属性，因为发现课表是上一次换一次，而非严格按照时间来。，
+        public DayCourse SelectedDayCourse 
+        {
+            get => selectedDayCourse;
+            set => Set(ref selectedDayCourse, value); 
+        }
 
         public WeekCourse SelectedWeek => WholeData.WeekCourses[WholeData.SelectedWeekId];
 
@@ -98,7 +103,6 @@ namespace OneTimetablePlus.Services
 
         public string SelectedColor => (WholeData.ColorConfig?.SelectedColor) ?? DefaultColorName;
 
-        //TODO: method addColor & deleteColor & changeSelectedColor
         #endregion
 
         #region Private Properties
@@ -111,7 +115,7 @@ namespace OneTimetablePlus.Services
             get
             {
                 string dayName = StringFormat.DayNameToDayNamePure(SelectedDayCourse.DayName);
-                return StringFormat.DayNameToDayId(dayName);
+                return StringFormat.DayNamePureToDayId(dayName);
             }
         }
 
@@ -134,7 +138,7 @@ namespace OneTimetablePlus.Services
 
             LoadFromFile();
 
-            //TODO: 似乎刚初始化，不能RaisePropertyChange
+            //似乎刚初始化，不能RaisePropertyChange
             //WeatherForecastLocation = "哈尔滨";
             //RaisePropertyChanged(() => WeatherForecastLocation);
         }
@@ -193,6 +197,36 @@ namespace OneTimetablePlus.Services
         #endregion
 
         #region Public Methods
+
+        public void SetToBeUsedCirculatingDayCommand()
+        {
+            DayCourse selectedDayCourseCopy = SelectedDayCourse;
+            int targetIndex = StringFormat.DayNameToIndex(SelectedDayCourse.DayName);
+            string targetDayNamePure = StringFormat.DayNameToDayNamePure(SelectedDayCourse.DayName);
+            CirculatingDayCourse cir = SelectedWeek.CirculatingCourses.Single(x => x.DayName == targetDayNamePure);
+            cir.CirculatingId = targetIndex;
+
+            // 计算 本日或下一个到达选中的周几 日期
+            int a = (int)DateTime.Today.DayOfWeek;
+            int b = StringFormat.DayNamePureToDayId(targetDayNamePure);
+            int c = (b + 7 - a) % 7;
+            DateTime circulatingDate = DateTime.Today.AddDays(c);
+            cir.CirculatingDate = circulatingDate;
+
+            //传递给ViewModel更新的信息
+            RaisePropertyChanged(() => AllDayCourses);
+
+            //设置选中为新加的那一项
+            SelectedDayCourse = selectedDayCourseCopy;
+
+            if (SelectedDayOfWeek == (int)DateTime.Today.DayOfWeek && circulatingDate == DateTime.Today)
+            {
+                RaisePropertyChanged(() => TodayDayCourse);
+            }
+
+            IsUnsaved = true;
+
+        }
 
         public void ChangeSelectedColor(string name)
         {
@@ -254,15 +288,15 @@ namespace OneTimetablePlus.Services
             SelectedWeek.CirculatingCourses ??= new List<CirculatingDayCourse>();
 
             //寻找该日的循环表
-            CirculatingDayCourse target = SelectedWeek.CirculatingCourses
+            CirculatingDayCourse cir = SelectedWeek.CirculatingCourses
                 .SingleOrDefault(t => t.DayName == dayName);
 
-            if (target == default(CirculatingDayCourse))
+            if (cir == default(CirculatingDayCourse))
             {
-                //生成一个循环表
+                // 新建一个循环表
                 // 计算 本日或下一个到达选中的周几 日期
                 int a = (int)DateTime.Today.DayOfWeek;
-                int b = StringFormat.DayNameToDayId(dayName);
+                int b = StringFormat.DayNamePureToDayId(dayName);
                 int c = (b + 7 - a) % 7;
                 DateTime circulatingDate = DateTime.Today.AddDays(c);
 
@@ -275,17 +309,17 @@ namespace OneTimetablePlus.Services
                 };
 
                 SelectedWeek.CirculatingCourses.Add(newCirculating);
-                target = newCirculating;
+                cir = newCirculating;
             }
 
             DayCourse add = new DayCourse
             {
-                DayName = dayName + ":" + (char)(65 + target.DayCourses.Count),
+                DayName = dayName + ":" + (char)(65 + cir.DayCourses.Count),
                 Courses = new List<Course>(),
             };
 
             //修改Model中的数据
-            target.DayCourses.Add(add);
+            cir.DayCourses.Add(add);
 
             //传递给ViewModel更新的信息
             //此时 如果由普通课表转为循环课表 会失去当前的选中
@@ -294,7 +328,7 @@ namespace OneTimetablePlus.Services
             //设置选中为新加的那一项
             SelectedDayCourse = add;
 
-            if (SelectedDayOfWeek == (int)DateTime.Today.DayOfWeek)
+            if (SelectedDayOfWeek == (int)DateTime.Today.DayOfWeek && cir.CirculatingDate == DateTime.Today)
             {
                 RaisePropertyChanged(() => TodayDayCourse);
             }
@@ -305,11 +339,12 @@ namespace OneTimetablePlus.Services
 
         public void DeleteCirculatingDay()
         {
-            string dayNamePure = StringFormat.DayNameToDayNamePure(SelectedDayCourse.DayName);
+            string selectedDayName = SelectedDayCourse.DayName.Replace("★", "");
+            string dayNamePure = StringFormat.DayNameToDayNamePure(selectedDayName);
             CirculatingDayCourse circulating = SelectedWeek.CirculatingCourses
                 .Single(x => x.DayName == dayNamePure);
 
-            int begin = circulating.DayCourses.FindIndex(x => x.DayName == SelectedDayCourse.DayName);
+            int begin = circulating.DayCourses.FindIndex(x => x.DayName == selectedDayName);
             circulating.DayCourses.RemoveAt(begin);
             for (int i = begin; i< circulating.DayCourses.Count; i++)
             {
@@ -518,17 +553,32 @@ namespace OneTimetablePlus.Services
         #endregion
 
         #region Private Methods
-
+        //TODO half done 添加显示五角星的功能，添加修改五角星位置功能
+        //TODO taskBar icon 动态变色
+        //TODO weather地址
         private List<DayCourse> GetAllDayCourses()
         {
             List<DayCourse> result = new List<DayCourse>(SelectedWeek.DayCourses);
 
             if (SelectedWeek.CirculatingCourses == null) return result;
 
-            foreach (CirculatingDayCourse circulate in SelectedWeek.CirculatingCourses)
+            foreach (CirculatingDayCourse cir in SelectedWeek.CirculatingCourses)
             {
-                if (circulate.DayCourses.Count == 0)
-                    continue;
+                if (cir.DayCourses.Count == 0)
+                    continue;                
+
+                int index = result.FindIndex(x => x.DayName == cir.DayName);
+                result.RemoveAt(index);
+                result.InsertRange(index, cir.DayCourses);
+
+                //找到星号位置并添加星号
+                int dayGap = (int)(DateTime.Today - cir.CirculatingDate).TotalDays;
+                //dayGap=0,=>idGap=0;dayGap=1-7,=>idGap=1
+                int idGap = ( dayGap + 6 ) / 7;
+                int id = (idGap + cir.CirculatingId) % cir.DayCourses.Count;
+                DayCourse star = result[index + id];
+                result[index + id] = new DayCourse() { Courses = star.Courses, DayName = star.DayName + "★" };
+                /*
                 int i = 0;
                 for (; i < result.Count;)
                 {
@@ -537,6 +587,7 @@ namespace OneTimetablePlus.Services
                         i++;
                         continue;
                     }
+                    //选出一天的
                     result.RemoveAt(i);
                     foreach (var day in circulate.DayCourses)
                     {
@@ -544,7 +595,7 @@ namespace OneTimetablePlus.Services
                         i++;
                     }
                     break;
-                }
+                }*/
 
             }
             return result;
@@ -562,10 +613,14 @@ namespace OneTimetablePlus.Services
                 {
                     if (cir.DayCourses.Count == 0)
                         continue;
+                    //如果循环课表有今天，则用循环课表的课程
                     if (cir.DayName == DateTime.Today.DayOfWeek.ToString())
                     {
                         int dayGap = (int)(DateTime.Today - cir.CirculatingDate).TotalDays;
-                        int idGap = dayGap / 7;
+                        //dayGap=0,=>idGap=0;dayGap=1-7,=>idGap=1
+                        //一般来说不会出现 dayGap%7!=0 的情况
+                        int idGap = ( dayGap + 6 ) / 7;
+                        //修改为今天应该显示的课表id与今天的日期
                         cir.CirculatingId = (cir.CirculatingId + idGap) % cir.DayCourses.Count;
                         cir.CirculatingDate = DateTime.Today;
                         result = cir.DayCourses[cir.CirculatingId];

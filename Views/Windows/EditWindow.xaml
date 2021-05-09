@@ -109,6 +109,7 @@
                     </StackPanel.Resources>
                     <Button Content="新加当日循环课表" Command="{Binding AddCirculatingDayCommand}"/>
                     <Button Content="删除该循环课表" Command="{Binding DeleteCirculatingDayCommand}"/>
+                    <Button Content="设为★" Command="{Binding SetToBeUsedCirculatingDayCommand}"/>
                 </StackPanel>
 
                 <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"

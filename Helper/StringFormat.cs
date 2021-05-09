@@ -24,11 +24,25 @@ namespace OneTimetablePlus.Helper
             return dayName;
         }
 
-        public static int DayNameToDayId(string dayName)
+        /// <summary>
+        /// 返回星期号对应的序号（周日开始，0-based）
+        /// </summary>
+        /// <example>
+        /// Sunday => 0
+        /// Monday => 1
+        /// </example>
+        /// <param name="dayName"></param>
+        /// <returns></returns>
+        public static int DayNamePureToDayId(string dayName)
         {
             return (int)Enum.Parse(typeof(DayOfWeek), dayName);
         }
 
+        /// <summary>
+        /// 循环课表名称 转为 循环课表序号(0-based)
+        /// </summary>
+        /// <param name="dayName"></param>
+        /// <returns></returns>
         public static int DayNameToIndex(string dayName)
         {
             int index = dayName.IndexOf(":", StringComparison.Ordinal);

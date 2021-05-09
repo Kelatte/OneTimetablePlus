@@ -10,6 +10,11 @@ namespace OneTimetablePlus.Services
 {
     public interface IDataProvider
     {
+        /// <summary>
+        /// 设为将用使用的循环课表 命令
+        /// </summary>
+        void SetToBeUsedCirculatingDayCommand();
+
         List<string> ColorNames { get; }
 
         string SelectedColor { get; }

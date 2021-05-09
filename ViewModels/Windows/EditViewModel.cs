@@ -34,6 +34,11 @@ namespace OneTimetablePlus.ViewModels.Windows
         #region Public Commmands
 
         /// <summary>
+        /// 设为将用使用的循环课表 命令
+        /// </summary>
+        public RelayCommand SetToBeUsedCirculatingDayCommand { get; set; }
+
+        /// <summary>
         /// 关闭前 命令
         /// </summary>
         public RelayCommand ClosingCommand { get; set; }
@@ -262,12 +267,20 @@ namespace OneTimetablePlus.ViewModels.Windows
             ClosedCommand = new RelayCommand(Closed);
             AddCirculatingDayCommand = new RelayCommand(AddCirculatingDay);
             DeleteCirculatingDayCommand = new RelayCommand(DeleteCirculatingDay, IsCirculatingDay);
+            SetToBeUsedCirculatingDayCommand = new RelayCommand(SetToBeUsedCirculatingDay, IsCirculatingDay);
         }
 
         #endregion
 
         #region Commmand Methods
 
+        private void SetToBeUsedCirculatingDay()
+        {
+            Debug.Print("EditWindow SetToBeUsedCirculatingDay Command");
+
+            data.SetToBeUsedCirculatingDayCommand();
+
+        }
         private void Closing()
         {
             Debug.Print("EditWindow Closing Command");
