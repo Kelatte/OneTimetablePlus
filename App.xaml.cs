@@ -37,8 +37,8 @@ namespace OneTimetablePlus
             tb = (TaskbarIcon) FindResource("TaskbarIcon");
 
             applicationViewModel = SimpleIoc.Default.GetInstance<ApplicationViewModel>();
-            applicationViewModel.EditWindowOpened = true;
-            //applicationViewModel.MainWindowOpened = true;
+            //applicationViewModel.EditWindowOpened = true;
+            applicationViewModel.MainWindowOpened = true;
 
         }
 
